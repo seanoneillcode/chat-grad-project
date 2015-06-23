@@ -1,0 +1,69 @@
+// Users
+
+GET /users
+	gets list of users
+	[{ id: 'bob', name: 'Bobby McBobberson'}, ...]
+PUT /users
+	register user
+	{ id: 'bob', name: 'Bobby McBobberson' }
+DELETE /users/bob
+	remove bob
+POST /users/bob
+	{ name: 'Brian' }
+
+// Conversations
+
+GET /conversations
+	get my list of conversations
+	[{ user: 'bob', lastMessage: 123454656, anyUnseen: true }, ...]
+
+PUT /conversations
+	start a conversation with someone
+	{ user: 'bob' }
+
+GET /conversations/bob
+	gets messages in conversation with bob
+	[{ sent: 123456, body: 'Hello!', seen: true, from: 'bob' }, ...]
+
+GET /conversations/stag-do
+	get messages from stag do group conversation
+	[{ sent: 123456, body: 'Hello!', seen: true, from: 'bob' }, ...]
+
+PUT /conversations/bob
+	send message to bob
+	{ sent: 123445, body: 'Hello!' }
+
+
+// Groups
+
+PUT /groups
+	create group
+	{ id: 'stag-do', title: '#yolo' }
+
+GET /groups
+	get groups I am in
+	[{ id: 'stag-do', title: '#yolo' }, ...]
+
+GET /groups/stag-do
+	get details of group (title?)
+	{ id: 'stag-do', title: '#yolo' }
+
+POST /groups/stag-do
+	update details of group
+	{ title: '#yolo' }
+
+DELETE /groups/stag-do
+	remove group
+
+// Group users
+
+PUT /groups/stag-do/users
+	add bob to group
+	{ user: 'bob' }
+
+GET /groups/stag-do/users
+	get users in group
+	['bob', ...]
+
+DELETE /groups/stag-do/users/bob
+	remove bob from group

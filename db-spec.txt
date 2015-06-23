@@ -1,0 +1,3 @@
+user document store
+message document store
+	key: 'a-b' (alphabetical combination of two users)
