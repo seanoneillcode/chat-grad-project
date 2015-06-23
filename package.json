@@ -1,0 +1,25 @@
+{
+  "name": "chat-grad-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:joebandenburg/chat-grad-project.git"
+  },
+  "author": "Joe Bandenburg <joe@bandenburg.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/joebandenburg/chat-grad-project/issues"
+  },
+  "homepage": "https://github.com/joebandenburg/chat-grad-project",
+  "devDependencies": {
+    "grunt": "^0.4.5"
+  },
+  "dependencies": {
+    "express": "^4.13.0"
+  }
+}
