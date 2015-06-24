@@ -3,12 +3,12 @@
 GET /users
 	gets list of users
 	[{ id: 'bob', name: 'Bobby McBobberson'}, ...]
-PUT /users
+POST /users
 	register user
 	{ id: 'bob', name: 'Bobby McBobberson' }
 DELETE /users/bob
 	remove bob
-POST /users/bob
+PUT /users/bob
 	{ name: 'Brian' }
 
 // Conversations
@@ -17,7 +17,7 @@ GET /conversations
 	get my list of conversations
 	[{ user: 'bob', lastMessage: 123454656, anyUnseen: true }, ...]
 
-PUT /conversations
+POST /conversations
 	start a conversation with someone
 	{ user: 'bob' }
 
@@ -29,14 +29,14 @@ GET /conversations/stag-do
 	get messages from stag do group conversation
 	[{ sent: 123456, body: 'Hello!', seen: true, from: 'bob' }, ...]
 
-PUT /conversations/bob
+POST /conversations/bob
 	send message to bob
 	{ sent: 123445, body: 'Hello!' }
 
 
 // Groups
 
-PUT /groups
+POST /groups
 	create group
 	{ id: 'stag-do', title: '#yolo' }
 
@@ -48,7 +48,7 @@ GET /groups/stag-do
 	get details of group (title?)
 	{ id: 'stag-do', title: '#yolo' }
 
-POST /groups/stag-do
+PUT /groups/stag-do
 	update details of group
 	{ title: '#yolo' }
 
@@ -57,7 +57,7 @@ DELETE /groups/stag-do
 
 // Group users
 
-PUT /groups/stag-do/users
+POST /groups/stag-do/users
 	add bob to group
 	{ user: 'bob' }
 
