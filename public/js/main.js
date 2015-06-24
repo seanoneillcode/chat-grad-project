@@ -1,3 +1,4 @@
+/* global $, document */
 $.ajax({
     url: "/api/user"
 }).then(function(user) {
@@ -17,7 +18,6 @@ $.ajax({
         });
         document.body.appendChild(ul);
     });
- 
 }, function() {
     $.ajax({
         url: "/api/oauth/uri"
@@ -27,7 +27,7 @@ $.ajax({
         anchor.href = result.uri;
         document.body.appendChild(anchor);
     });
-    console.log('not logged in');
+    console.log("not logged in");
 });
 
 function makeLi(user) {
