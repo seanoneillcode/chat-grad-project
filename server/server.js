@@ -89,7 +89,13 @@ module.exports = function(port, db, oauthClientId, oauthSecret) {
     app.get("/api/users", function(req, res) {
         users.find().toArray(function(err, docs) {
             if (!err) {
-                res.json(docs);
+                res.json(docs.map(function(user) {
+                    return {
+                        id: user._id,
+                        name: user.name,
+                        avatarUrl: user.avatarUrl
+                    };
+                }));
             } else {
                 res.sendStatus(500);
             }
