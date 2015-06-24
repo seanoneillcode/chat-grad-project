@@ -6,13 +6,18 @@
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     </head>
     <body>
-        <a href="https://github.com/login/oauth/authorize?client_id=fa4a22095c46dfc1d832">Log in</a>
+        <a id="login">Log in</a>
         <script>
             $.ajax({
                 url: "/api/user"
             }).then(function(user) {
                 console.log('logged in as ' + user.name);
             }, function() {
+                $.ajax({
+                    url: "/api/oauth/uri"
+                }).then(function(result) {
+                    document.getElementById("login").href = result.uri;
+                });
                 console.log('not logged in');
             });
         </script>

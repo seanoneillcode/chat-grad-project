@@ -61,6 +61,14 @@ module.exports = function(port, db, oauthClientId, oauthSecret) {
         });
     });
 
+    app.get("/api/oauth/uri", function(req, res) {
+        res.json({
+            uri: URI("https://github.com/login/oauth/authorize").query({
+                client_id: oauthClientId
+            }).toString()
+        });
+    });
+
     app.use(function(req, res, next) {
         if (req.cookies.sessionToken) {
             req.session = sessions[req.cookies.sessionToken];
