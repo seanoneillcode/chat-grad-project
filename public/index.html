@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Chat</title>
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    </head>
+    <body>
+        <a href="https://github.com/login/oauth/authorize?client_id=fa4a22095c46dfc1d832">Log in</a>
+        <script>
+            $.ajax({
+                url: "/api/user"
+            }).then(function(user) {
+                console.log('logged in as ' + user.name);
+            }, function() {
+                console.log('not logged in');
+            });
+        </script>
+    </body>
+</html>
