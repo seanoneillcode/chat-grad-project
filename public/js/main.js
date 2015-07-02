@@ -1,37 +1,19 @@
-/* global $, document */
-$.ajax({
-    url: "/api/user"
-}).then(function(user) {
-    var div = document.createElement("div");
-    div.textContent = "Logged in as " + user.name;
-    document.body.appendChild(div);
+(function() {
+    var app = angular.module("ChatApp", []);
 
-    $.ajax({
-        url: "/api/users"
-    }).then(function(users) {
-        var usersLabel = document.createElement("h2");
-        usersLabel.textContent = "List of registered users";
-        document.body.appendChild(usersLabel);
-        var ul = document.createElement("ul");
-        users.map(makeLi).forEach(function (li) {
-            ul.appendChild(li);
+    app.controller("ChatController", function($scope, $http) {
+        $scope.loggedIn = false;
+
+        $http.get("/api/user").then(function(userResult) {
+            $scope.loggedIn = true;
+            $scope.user = userResult.data;
+            $http.get("/api/users").then(function(result) {
+                $scope.users = result.data;
+            });
+        }, function() {
+            $http.get("/api/oauth/uri").then(function(result) {
+                $scope.loginUri = result.data.uri;
+            });
         });
-        document.body.appendChild(ul);
     });
-}, function() {
-    $.ajax({
-        url: "/api/oauth/uri"
-    }).then(function(result) {
-        var anchor = document.createElement("a");
-        anchor.textContent = "Log in";
-        anchor.href = result.uri;
-        document.body.appendChild(anchor);
-    });
-    console.log("not logged in");
-});
-
-function makeLi(user) {
-    var li = document.createElement("li");
-    li.textContent = user.name;
-    return li;
-}
+})();
