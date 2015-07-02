@@ -1,4 +1,4 @@
-[![Circle CI](https://circleci.com/gh/joebandenburg/chat-grad-project/tree/master.svg?style=svg)](https://circleci.com/gh/joebandenburg/chat-grad-project/tree/master)
+[![Circle CI](https://circleci.com/gh/seanworkcode/chat-grad-project/tree/master.svg?style=svg)](https://circleci.com/gh/seanworkcode/chat-grad-project/tree/master)
 
 # chat-grad-project
 
