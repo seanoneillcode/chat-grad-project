@@ -6,6 +6,7 @@ var URI = require("URIjs");
 module.exports = function(port, db, oauthClientId, oauthSecret) {
     var app = express();
 
+    app.use("/bower_components", express.static("bower_components"));
     app.use(express.static("public"));
     app.use(cookieParser());
 
