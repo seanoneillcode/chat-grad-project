@@ -1,3 +1,6 @@
+test:
+  pre:
+    - bower install
 deployment:
   prod:
     branch: master
