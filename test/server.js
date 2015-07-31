@@ -8,13 +8,18 @@ var baseUrl = "http://localhost:" + testPort;
 var oauthClientId = "1234clientId";
 
 describe("server", function() {
-    var serverInstance;
     var db;
+    var githubAuthoriser;
+    var serverInstance;
     beforeEach(function() {
         db = {
             collection: sinon.spy()
         };
-        serverInstance = server(testPort, db, oauthClientId);
+        githubAuthoriser = {
+            authorise: function() {},
+            oAuthUri: "https://github.com/login/oauth/authorize?client_id=" + oauthClientId
+        };
+        serverInstance = server(testPort, db, githubAuthoriser);
     });
     afterEach(function() {
         serverInstance.close();

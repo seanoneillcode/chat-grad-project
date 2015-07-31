@@ -1,9 +1,7 @@
 var express = require("express");
 var cookieParser = require("cookie-parser");
-var request = require("request");
-var URI = require("URIjs");
 
-module.exports = function(port, db, oauthClientId, oauthSecret) {
+module.exports = function(port, db, githubAuthoriser) {
     var app = express();
 
     app.use(express.static("public"));
@@ -13,59 +11,37 @@ module.exports = function(port, db, oauthClientId, oauthSecret) {
     var sessions = {};
 
     app.get("/oauth", function(req, res) {
-        var code = req.query.code;
-        request({
-            url: URI("https://github.com/login/oauth/access_token")
-                .query({
-                    "client_id": oauthClientId,
-                    "client_secret": oauthSecret,
-                    "code": code
-                }).toString(),
-            headers: {
-                "Accept": "application/json"
-            }
-        }, function(error, response, body) {
-            body = JSON.parse(body);
-            if (body.error) {
-                res.sendStatus(400);
-            } else {
-                var token = body.access_token;
-                request({
-                    url: "https://api.github.com/user",
-                    headers: {
-                        "User-Agent": "chat-grad-project",
-                        "Authorization": "token " + token
+        githubAuthoriser.authorise(req, function(githubUser, token) {
+            if (githubUser) {
+                users.findOne({
+                    _id: githubUser.login
+                }, function(err, user) {
+                    if (!user) {
+                        // TODO: Wait for this operation to complete
+                        users.insertOne({
+                            _id: githubUser.login,
+                            name: githubUser.name,
+                            avatarUrl: githubUser.avatar_url
+                        });
                     }
-                }, function(e2, r2, b2) {
-                    var githubUser = JSON.parse(b2);
-                    users.findOne({
-                        _id: githubUser.login
-                    }, function(err, user) {
-                        if (!user) {
-                            // TODO: Wait for this operation to complete
-                            users.insertOne({
-                                _id: githubUser.login,
-                                name: githubUser.name,
-                                avatarUrl: githubUser.avatar_url
-                            });
-                        }
-                        sessions[token] = {
-                            user: githubUser.login
-                        };
-                        res.cookie("sessionToken", token);
-                        res.header("Location", "/");
-                        res.sendStatus(302);
-                    });
+                    sessions[token] = {
+                        user: githubUser.login
+                    };
+                    res.cookie("sessionToken", token);
+                    res.header("Location", "/");
+                    res.sendStatus(302);
                 });
             }
+            else {
+                res.sendStatus(400);
+            }
+
         });
     });
 
     app.get("/api/oauth/uri", function(req, res) {
         res.json({
-            uri: URI("https://github.com/login/oauth/authorize").query({
-                client_id: oauthClientId
-            }).toString()
+            uri: githubAuthoriser.oAuthUri
         });
     });
 
