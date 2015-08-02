@@ -251,7 +251,7 @@ describe("server", function() {
                 });
             });
         });
-        it("responds with status code 500 if user is authenticated but missing from database", function(done) {
+        it("responds with status code 500 if database error", function(done) {
             authenticateUser(testUser, testToken, function() {
                 allUsers.toArray.callsArgWith(0, {err: "Database failure"}, null);
 
