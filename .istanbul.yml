@@ -1,0 +1,12 @@
+check:
+    global:
+        statements: 100
+        lines: 100
+        branches: 100
+        functions: 100
+reporting:
+    watermarks:
+        statements: [80, 100]
+        lines: [80, 100]
+        functions: [80, 100]
+        branches: [80, 100]
