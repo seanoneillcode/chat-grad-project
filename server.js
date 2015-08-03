@@ -1,4 +1,5 @@
 var server = require("./server/server");
+var oAuthGithub = require("./server/oauth-github");
 var MongoClient = require("mongodb").MongoClient;
 
 var port = process.env.PORT || 8080;
@@ -11,6 +12,7 @@ MongoClient.connect(dbUri, function(err, db) {
         console.log("Failed to connect to db", err);
         return;
     }
-    server(port, db, oauthClientId, oauthSecret);
+    var githubAuthoriser = oAuthGithub(oauthClientId, oauthSecret);
+    server(port, db, githubAuthoriser);
     console.log("Server running on port " + port);
 });
