@@ -2,4 +2,4 @@ deployment:
   prod:
     branch: master
     heroku:
-      appname: chat-grad-project
+      appname: grad-chat-app
