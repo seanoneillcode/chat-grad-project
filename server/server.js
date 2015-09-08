@@ -8,6 +8,7 @@ module.exports = function(port, db, githubAuthoriser) {
     app.use(cookieParser());
 
     var users = db.collection("users");
+    var conversations = db.collection("conversations");
     var sessions = {};
 
     app.get("/oauth", function(req, res) {
@@ -85,6 +86,26 @@ module.exports = function(port, db, githubAuthoriser) {
             }
         });
     });
+
+    var router = express.Router();
+    router.route("/conversations")
+        .get(function(req, res) {
+            conversations.find().toArray(function(err, docs) {
+                if (!err) {
+                    res.json(docs.map(function(conversation) {
+                        return {
+                            id: conversation._id,
+                            users: conversation.users,
+                            messages: conversation.messages
+                        };
+                    }));
+                } else {
+                    res.sendStatus(500);
+                }
+            });
+        });
+
+    app.use("/api", router);
 
     return app.listen(port);
 };
