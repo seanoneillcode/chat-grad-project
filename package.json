@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:joebandenburg/chat-grad-project.git"
+    "url": "git@github.com:thullSL/chat-grad-project.git"
   },
-  "author": "Joe Bandenburg <joe@bandenburg.com>",
+  "author": "Thom Hull ",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/joebandenburg/chat-grad-project/issues"
+    "url": "https://github.com/thullSL/chat-grad-project/issues"
   },
-  "homepage": "https://github.com/joebandenburg/chat-grad-project",
+  "homepage": "https://github.com/thullSL/chat-grad-project",
   "devDependencies": {
     "chai": "^3.0.0",
     "grunt": "^0.4.5",
@@ -23,6 +23,7 @@
     "grunt-jscs": "^1.8.0",
     "grunt-mocha-istanbul": "^2.4.0",
     "grunt-mocha-test": "^0.12.7",
+    "grunt-nodemon": "^0.4.0",
     "istanbul": "^0.3.17",
     "mocha": "^2.2.5",
     "sinon": "^1.15.4"

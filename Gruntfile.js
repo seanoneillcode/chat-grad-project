@@ -3,6 +3,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-jscs");
     grunt.loadNpmTasks("grunt-mocha-test");
     grunt.loadNpmTasks("grunt-mocha-istanbul");
+    grunt.loadNpmTasks("grunt-nodemon");
 
     var files = ["Gruntfile.js", "server.js", "server/**/*.js", "test/**/*.js", "public/**/*.js"];
     var artifactsLocation = "build_artifacts";
@@ -48,6 +49,14 @@ module.exports = function(grunt) {
                 coverageFolder: artifactsLocation,
                 check: true
             }
+        },
+        nodemon: {
+            all: {
+                script: "server.js",
+                options : {
+                    ignore : ["public/", "Gruntfile.js"]
+                }
+            }
         }
     });
 
@@ -72,5 +81,7 @@ module.exports = function(grunt) {
     grunt.registerTask("check", ["jshint", "jscs"]);
     grunt.registerTask("test", ["check", "mochaTest", "mocha_istanbul", "istanbul_report",
         "istanbul_check_coverage"]);
-    grunt.registerTask("default", "test");
+    grunt.registerTask("demon", "nodemon");
+
+    grunt.registerTask("default", "nodemon");
 };
