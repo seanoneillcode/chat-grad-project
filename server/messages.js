@@ -10,8 +10,8 @@ function MessageService(db) {
 
     this.expandMessages = function(conversation) {
         return new Promise(function (resolve, reject) {
-            var messageIds = conversation.messages.map(mongo.ObjectID);
-            messages.find({_id: {$in: messageIds}}).toArray(function (err, fullMessages) {
+            var conversationId = mongo.ObjectID(conversation._id);
+            messages.find({conversation: conversationId}).toArray(function (err, fullMessages) {
                 if (err) {
                     reject({code: 500, msg: err});
                 } else {
@@ -32,7 +32,7 @@ function MessageService(db) {
                 if (err) {
                     reject({code: 500, msg: err});
                 } else {
-                    message._id = result.insertedId
+                    message._id = result.insertedId;
                     resolve(message);
                 }
             });

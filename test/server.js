@@ -376,7 +376,7 @@ describe("server", function () {
         var requestUrl = baseUrl + "/api/conversations";
         var allConversations;
         var allUsers;
-        var validConversation = {users : ["thullSL", "fakeTest"], messages : []};
+        var validConversation = {users : ["thullSL", "fakeTest"]};
         beforeEach(function () {
             allConversations = {
                 toArray: sinon.stub()
