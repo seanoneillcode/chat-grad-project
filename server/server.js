@@ -3,6 +3,7 @@ var cookieParser = require("cookie-parser");
 var ConversationService = require("./conversations.js");
 var UserService = require("./users.js");
 var MessageService = require("./messages.js");
+var bodyParser = require("body-parser");
 
 var ObjectId = require("mongodb").ObjectID;
 
@@ -11,13 +12,13 @@ module.exports = function (port, db, githubAuthoriser) {
     var router = express.Router();
 
     app.use(express.static("public"));
-
+    app.use(bodyParser.json());
     app.use(cookieParser());
-    var users = db.collection("users");
+
     var conversations = db.collection("conversations");
+    var users = db.collection("users");
     var messages = db.collection("messages");
     var sessions = {};
-
     var cService = new ConversationService(db);
     var uService = new UserService(db);
     var mService = new MessageService(db);
@@ -111,6 +112,20 @@ module.exports = function (port, db, githubAuthoriser) {
                     res.sendStatus(500);
                 }
             );
+        })
+        .post(function (req, res) {
+            var conversation = req.body;
+            cService.validateNew(conversation)
+                .then(function() {
+                    return cService.insertOne(conversation);
+                })
+                .then(function() {
+                    res.sendStatus(201);
+                })
+                .catch(function(err) {
+                    res.sendStatus(err.code);
+                });
+
         });
 
     router.route("/conversations/:id")

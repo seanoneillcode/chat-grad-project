@@ -56,7 +56,7 @@ describe("server", function () {
             conversations: {
                 find: sinon.stub(),
                 findOne: sinon.stub(),
-                insertOne: sinon.spy()
+                insertOne: sinon.stub()
             },
             messages: {
                 find: sinon.stub(),
@@ -366,6 +366,84 @@ describe("server", function () {
                 allConversations.toArray.callsArgWith(0, {err: "Database failure"}, null);
 
                 request({url: requestUrl, jar: cookieJar}, function (error, response) {
+                    assert.equal(response.statusCode, 500);
+                    done();
+                });
+            });
+        });
+    });
+    describe("POST /api/conversations", function () {
+        var requestUrl = baseUrl + "/api/conversations";
+        var allConversations;
+        var allUsers;
+        var validConversation = {users : ["thullSL", "fakeTest"], messages : []};
+        beforeEach(function () {
+            allConversations = {
+                toArray: sinon.stub()
+            };
+            dbCollections.conversations.find.returns(allConversations);
+            allUsers = {
+                toArray: sinon.stub()
+            };
+            dbCollections.users.find.returns(allUsers);
+        });
+        it("responds with status code 401 if user not authenticated", function (done) {
+            request.post({
+                url: requestUrl,
+                json: validConversation
+            }, function (error, response) {
+                assert.equal(response.statusCode, 401);
+                done();
+            });
+        });
+        it("responds with status code 401 if user has an unrecognised session token", function (done) {
+            cookieJar.setCookie(request.cookie("sessionToken=" + testExpiredToken), baseUrl);
+            request.post({url: requestUrl, json: validConversation, jar: cookieJar}, function (error, response) {
+                assert.equal(response.statusCode, 401);
+                done();
+            });
+        });
+        it("responds with status code 201 if user is authenticated && valid object", function (done) {
+            authenticateUser(testUser, testToken, function () {
+                dbCollections.users.findOne.callsArgOnWith(1, null , null, testUser);
+                dbCollections.conversations.insertOne.callsArg(1);
+
+                request.post({url: requestUrl, json: validConversation, jar: cookieJar}, function (error, response) {
+                    assert.equal(response.statusCode, 201);
+                    done();
+                });
+            });
+        });
+        it("responds with status code 404 if user not found", function (done) {
+            authenticateUser(testUser, testToken, function () {
+                validConversation.users[0] = "not a user";
+                dbCollections.users.findOne.callsArgOnWith(1, null , null, null);
+                dbCollections.conversations.insertOne.callsArg(1);
+
+                request.post({url: requestUrl, json: validConversation, jar: cookieJar}, function (error, response) {
+                    assert.equal(response.statusCode, 404);
+                    done();
+                });
+            });
+        });
+        it("responds with status code 500 user lookup fails", function (done) {
+            authenticateUser(testUser, testToken, function () {
+                validConversation.users[0] = "not a user";
+                dbCollections.users.findOne.callsArgOnWith(1, null ,  {err: "Database failure"}, testUser);
+
+                request.post({url: requestUrl, json: validConversation, jar: cookieJar}, function (error, response) {
+                    assert.equal(response.statusCode, 500);
+                    done();
+                });
+            });
+        });
+        it("responds with status code 500 if insert fails", function (done) {
+            authenticateUser(testUser, testToken, function () {
+                validConversation.users[0] = "not a user";
+                dbCollections.users.findOne.callsArgOnWith(1, null , null, testUser);
+                dbCollections.conversations.insertOne.callsArgOnWith(1, null , {err: "Database failure"}, null);
+
+                request.post({url: requestUrl, json: validConversation, jar: cookieJar}, function (error, response) {
                     assert.equal(response.statusCode, 500);
                     done();
                 });
