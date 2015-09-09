@@ -55,7 +55,7 @@ function ConversationService(db) {
 
     this.conversationExists = function (conversationId) {
         return new Promise(function (resolve, reject) {
-            conversations.findOne({_id: conversationId}, function (err, user) {
+            conversations.findOne({_id: mongo.ObjectID(conversationId)}, function (err, user) {
                 if (err) {
                     reject({code: 500, msg: err});
                 } else if (user === null) {
