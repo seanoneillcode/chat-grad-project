@@ -1,6 +1,8 @@
 var express = require("express");
 var cookieParser = require("cookie-parser");
 var ConversationService = require("./conversations.js");
+var UserService = require("./users.js");
+var MessageService = require("./messages.js");
 
 var ObjectId = require("mongodb").ObjectID;
 
@@ -17,6 +19,8 @@ module.exports = function (port, db, githubAuthoriser) {
     var sessions = {};
 
     var cService = new ConversationService(db);
+    var uService = new UserService(db);
+    var mService = new MessageService(db);
 
     app.get("/oauth", function (req, res) {
         githubAuthoriser.authorise(req, function (githubUser, token) {
@@ -97,8 +101,8 @@ module.exports = function (port, db, githubAuthoriser) {
     router.route("/conversations")
         .get(function (req, res) {
             cService.getConversations()
-                .then(cService.allExpandUsers)
-                .then(cService.allMarshalConversation)
+                .then(uService.expandUsersForList)
+                .then(cService.marshalConversationList)
                 .then(
                 function (conversations) {
                     res.json(conversations);
@@ -117,10 +121,10 @@ module.exports = function (port, db, githubAuthoriser) {
                 res.sendStatus(400);
             } else {
                 cService.getConversation(id)
-                .then(cService.expandUsers)
-                .then(cService.expandMessages)
-                .then(cService.marshalConversation)
-                .then(
+                    .then(uService.expandUsers)
+                    .then(mService.expandMessages)
+                    .then(cService.marshalConversation)
+                    .then(
                     function (conversation) {
                         res.json(conversation);
                     })

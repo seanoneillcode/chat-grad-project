@@ -3,9 +3,7 @@ var mongo = require("mongodb");
 
 function ConversationService(db) {
 
-    var users = db.collection("users");
     var conversations = db.collection("conversations");
-    var messages = db.collection("messages");
     var self = this;
 
     this.getConversations = function() {
@@ -15,23 +13,6 @@ function ConversationService(db) {
                     reject({code: 500, msg: err});
                 } else {
                     resolve(conversations);
-                }
-            });
-        });
-    };
-
-    this.allExpandUsers = function(conversations) {
-        return new Promise.all(conversations.map(self.expandUsers));
-    };
-
-    this.expandUsers = function(conversation) {
-        return new Promise(function (resolve, reject) {
-            users.find({_id: {$in: conversation.users}}).toArray(function (err, fullUsers) {
-                if (err) {
-                    reject({code: 500, msg: err});
-                } else {
-                    conversation.users = fullUsers;
-                    resolve(conversation);
                 }
             });
         });
@@ -52,21 +33,7 @@ function ConversationService(db) {
         });
     };
 
-    this.expandMessages = function(conversation) {
-        return new Promise(function (resolve, reject) {
-            var messageIds = conversation.messages.map(mongo.ObjectID);
-            messages.find({_id: {$in: messageIds}}).toArray(function (err, fullMessages) {
-                if (err) {
-                    reject({code: 500, msg: err});
-                } else {
-                    conversation.messages = fullMessages;
-                    resolve(conversation);
-                }
-            });
-        });
-    };
-
-    this.allMarshalConversation = function(conversations) {
+    this.marshalConversationList = function (conversations) {
         return conversations.map(self.marshalConversation);
     };
 
