@@ -151,6 +151,15 @@ module.exports = function (port, db, githubAuthoriser) {
             }
         });
 
+    router.route("/conversations/:id/messages")
+        .post(function (req, res) {
+            var id = req.params.id;
+            var conversation = req.body;
+
+            console.log(id, conversation);
+
+        });
+
     app.use("/api", router);
 
     return app.listen(port);

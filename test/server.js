@@ -406,7 +406,8 @@ describe("server", function () {
         it("responds with status code 201 if user is authenticated && valid object", function (done) {
             authenticateUser(testUser, testToken, function () {
                 dbCollections.users.findOne.callsArgOnWith(1, null , null, testUser);
-                dbCollections.conversations.insertOne.callsArg(1);
+                dbCollections.conversations.insertOne.callsArgOnWith(1,
+                    null , null, {insertedId : testConversation._id});
 
                 request.post({url: requestUrl, json: validConversation, jar: cookieJar}, function (error, response) {
                     assert.equal(response.statusCode, 201);
