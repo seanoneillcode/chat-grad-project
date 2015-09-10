@@ -11,6 +11,7 @@ angular.module("ChatApp").controller("ChatController", function ($scope, $rootSc
     $http.get("/api/user").then(function (userResult) {
         vm.loggedIn = true;
         vm.user = userResult.data;
+        conversationService.startService();
         $http.get("/api/users").then(function (result) {
             vm.users = result.data;
         });

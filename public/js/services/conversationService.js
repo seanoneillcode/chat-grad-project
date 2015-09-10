@@ -4,7 +4,8 @@
     function conversationService($http, $rootScope, $interval) {
         var service = {
             getConversations: getConversations,
-            pollConversations: pollConversations
+            pollConversations: pollConversations,
+            startService: startService
         };
 
         var conversations = [];
@@ -17,6 +18,11 @@
 
         function getConversations() {
             return conversations;
+        }
+
+        function startService() {
+            $interval(pollConversations, 1000);
+            pollConversations();
         }
 
         function pollConversations() {
