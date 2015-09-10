@@ -15,7 +15,7 @@
     <h2>List of registered users</h2>
     <ul>
         <li ng-repeat="user in vm.users">
-            <img alt="@{{user._id}}" class="gravatar" height="30" src="{{user.avatarUrl}}&amp;s=60" width="30">
+            <img alt="@{{user._id}}" class="gravatar" height="30" ng-src="{{user.avatarUrl}}&amp;s=60" width="30">
             {{user.name}}
         </li>
     </ul>
@@ -23,15 +23,25 @@
     <ul>
         <li ng-repeat="conversation in vm.conversations" >
             <div class="member-list" ng-repeat="user in conversation.users | filter:{ _id : '!' + vm.user._id}">
-                <img alt="@{{user._id}}" class="gravatar" height="30" src="{{user.avatarUrl}}&amp;s=60" width="30">
+                <img alt="@{{user._id}}" class="gravatar" height="30" ng-src="{{user.avatarUrl}}&amp;s=60" width="30">
                 {{user.name}}
             </div>
             <button ng-click="vm.getConversation(conversation.id)" >show</button>
         </li>
     </ul>
 
-    <div>
-        {{vm.currentConversation}}
+    <div class="full-conversation">
+        <h2>Conversation</h2>
+        <div class="message" ng-repeat="message in vm.currentConversation.messages">
+            <div ng-if="message.sender._id !== vm.user._id" >
+                <img class="gravatar" height="30" ng-src="{{message.sender.avatarUrl}}&amp;s=60" width="30">
+                {{message.content}}
+            </div>
+            <div ng-if="message.sender._id === vm.user._id" >
+                {{message.content}}
+                <img class="gravatar" height="30" ng-src="{{message.sender.avatarUrl}}&amp;s=60" width="30">
+            </div>
+        </div>
     </div>
 </section>
 

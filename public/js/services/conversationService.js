@@ -24,7 +24,7 @@
         }
         function startService() {
             if (!serviceStarted) {
-                $interval(pollConversations, 1000);
+                //$interval(pollConversations, 1000);
                 pollConversations();
             }
         }
