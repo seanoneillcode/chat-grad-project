@@ -38,12 +38,23 @@ function ConversationService(db) {
     };
 
     this.marshalConversation = function (conversation) {
+        conversation.messages.forEach(function(message) {
+            message.sender = findUser(conversation.users, message.sender);
+        });
         return {
             id: conversation._id,
             users: conversation.users,
             messages: conversation.messages
         };
     };
+
+    function findUser(userList, userId) {
+        for (var i = 0; i < userList.length; i++) {
+            if (userList[i]._id === userId) {
+                return userList[i];
+            }
+        }
+    }
 
     this.insertOne = function (conversation) {
         return new Promise(function (resolve, reject) {

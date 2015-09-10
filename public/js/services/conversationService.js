@@ -4,13 +4,16 @@
     function conversationService($http, $rootScope, $interval, errorService) {
         var service = {
             getConversations: getConversations,
-            getConversation: getConversation,
+            getCurrentConversation: getCurrentConversation,
             pollConversations: pollConversations,
-            startService: startService
+            startService: startService,
+            watchConversation: watchConversation
         };
 
         var conversations = [];
         var serviceStarted = false;
+        var currentConversation;
+        var currentWatchPromise;
         return service;
 
         //////////////////////////////////////////
@@ -19,14 +22,35 @@
             return conversations;
         }
 
-        function getConversation(id) {
-            return $http.get("/api/conversations/" + id).error(errorService.broadcast);
+        function getCurrentConversation() {
+            return currentConversation;
+        }
+
+        function pollConversation(id) {
+            return $http.get("/api/conversations/" + id).success(function(data) {
+                if (currentConversation === undefined ||
+                data.messages.length > currentConversation.messages.length ||
+                data.id !== currentConversation.id) {
+                    currentConversation = data;
+                    broadcastMessage(currentConversation);
+                }
+            }).error(errorService.broadcast);
         }
         function startService() {
             if (!serviceStarted) {
-                $interval(pollConversations, 1000);
+                $interval(pollConversations, 10000);
                 pollConversations();
             }
+        }
+
+        function watchConversation(conversationId) {
+            if (currentWatchPromise !== undefined) {
+                $interval.cancel(currentWatchPromise);
+            }
+            currentWatchPromise = $interval(function() {
+                pollConversation(conversationId);
+            }, 1000);
+            pollConversation(conversationId);
         }
 
         function pollConversations() {
@@ -42,6 +66,10 @@
         function broadcastConversations(data) {
             $rootScope.$broadcast("conversationsChanged");
             return data;
+        }
+
+        function broadcastMessage(data) {
+            $rootScope.$broadcast("currentConversation");
         }
     }
 })();

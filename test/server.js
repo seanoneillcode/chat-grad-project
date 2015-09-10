@@ -33,7 +33,8 @@ var testConversation = {
 var testMessage = {
     _id: "55eeb8c4e4b0966f47937928",
     content: "Test Message",
-    timestamp: "1234"
+    timestamp: "1234",
+    sender: "bob"
 };
 
 var testToken = "123123";
@@ -470,6 +471,12 @@ describe("server", function () {
                 toArray: sinon.stub()
             };
             dbCollections.messages.find.returns(allMessages);
+            testMessage = {
+                _id: "55eeb8c4e4b0966f47937928",
+                content: "Test Message",
+                timestamp: "1234",
+                sender: "bob"
+            };
         });
         it("responds with status code 401 if user not authenticated", function (done) {
             request(requestUrl, function (error, response) {
