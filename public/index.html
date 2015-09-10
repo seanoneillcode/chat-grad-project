@@ -19,10 +19,15 @@
     </ul>
     <h2>List of conversations</h2>
     <ul>
-        <li ng-repeat="conversation in vm.conversations">
+        <li ng-repeat="conversation in vm.conversations" >
             {{conversation}}
+            <button ng-click="vm.getConversation(conversation.id)" >show</button>
         </li>
     </ul>
+
+    <div>
+        {{vm.currentConversation}}
+    </div>
 </section>
 
 
@@ -31,6 +36,7 @@
 
 <!-- Services -->
 <script src="js/services/conversationService.js"></script>
+<script src="js/services/errorService.js"></script>
 
 </body>
 </html>
