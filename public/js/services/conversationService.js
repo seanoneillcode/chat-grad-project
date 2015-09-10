@@ -3,11 +3,11 @@
 
     function conversationService($http, $rootScope, $interval, errorService) {
         var service = {
+            startService: startService,
             getConversations: getConversations,
             getCurrentConversation: getCurrentConversation,
-            pollConversations: pollConversations,
-            startService: startService,
-            watchConversation: watchConversation
+            watchConversation: watchConversation,
+            createConversation: createConversation
         };
 
         var conversations = [];
@@ -18,6 +18,12 @@
 
         //////////////////////////////////////////
 
+        function createConversation(userList) {
+            $http.post("api/conversation", {
+                users : userList
+            }).success(pollConversations).error(errorService.broadcast);
+        }
+
         function getConversations() {
             return conversations;
         }
@@ -26,16 +32,6 @@
             return currentConversation;
         }
 
-        function pollConversation(id) {
-            return $http.get("/api/conversations/" + id).success(function(data) {
-                if (currentConversation === undefined ||
-                data.messages.length > currentConversation.messages.length ||
-                data.id !== currentConversation.id) {
-                    currentConversation = data;
-                    broadcastMessage(currentConversation);
-                }
-            }).error(errorService.broadcast);
-        }
         function startService() {
             if (!serviceStarted) {
                 $interval(pollConversations, 10000);
@@ -61,6 +57,17 @@
                         broadcastConversations(conversations);
                     }
                 }).error(errorService.broadcast);
+        }
+
+        function pollConversation(id) {
+            return $http.get("/api/conversations/" + id).success(function(data) {
+                if (currentConversation === undefined ||
+                    data.messages.length > currentConversation.messages.length ||
+                    data.id !== currentConversation.id) {
+                    currentConversation = data;
+                    broadcastMessage(currentConversation);
+                }
+            }).error(errorService.broadcast);
         }
 
         function broadcastConversations(data) {
