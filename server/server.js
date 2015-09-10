@@ -58,18 +58,18 @@ module.exports = function (port, db, githubAuthoriser) {
         });
     });
 
-    //app.use(function (req, res, next) {
-    //    if (req.cookies.sessionToken) {
-    //        req.session = sessions[req.cookies.sessionToken];
-    //        if (req.session) { ////////////////////////////////////
-    //            next();
-    //        } else {
-    //            res.sendStatus(401);
-    //        }
-    //    } else {
-    //        res.sendStatus(401);
-    //    }
-    //});
+    app.use(function (req, res, next) {
+        if (req.cookies.sessionToken) {
+            req.session = sessions[req.cookies.sessionToken];
+            if (req.session) { ////////////////////////////////////
+                next();
+            } else {
+                res.sendStatus(401);
+            }
+        } else {
+            res.sendStatus(401);
+        }
+    });
 
     app.get("/api/user", function (req, res) {
         users.findOne({
@@ -115,7 +115,7 @@ module.exports = function (port, db, githubAuthoriser) {
         })
         .post(function (req, res) {
             var conversation = req.body;
-            cService.validateNew(conversation)
+            uService.userListExists(conversation.users)
                 .then(function() {
                     return cService.insertOne(conversation);
                 })
@@ -156,7 +156,7 @@ module.exports = function (port, db, githubAuthoriser) {
             var id = req.params.id;
             var message = req.body;
             message.conversation = ObjectId(id);
-            cService.conversationExists(id)
+            cService.getConversation(id)
                 .then(function() {
                     return uService.userExists(message.sender);
                 })

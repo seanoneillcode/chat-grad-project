@@ -1,13 +1,10 @@
 var Promise = require("promise");
 var mongo = require("mongodb");
 var UserService = require("./users.js");
-var ConversationService = require("./conversations.js");
 
 function MessageService(db) {
 
     var messages = db.collection("messages");
-    var uService = new UserService(db);
-    var self = this;
 
     this.expandMessages = function(conversation) {
         return new Promise(function (resolve, reject) {
@@ -22,12 +19,6 @@ function MessageService(db) {
             });
         });
     };
-
-    //this.validateNew = function (message) {
-    //    return uService.userExists(message.sender).then(function() {
-    //        return cService.conversationExists(message.conversation);
-    //    });
-    //};
 
     this.insertOne = function (message) {
         return new Promise(function (resolve, reject) {

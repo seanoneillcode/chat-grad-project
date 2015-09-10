@@ -1,5 +1,4 @@
 var Promise = require("promise");
-var mongo = require("mongodb");
 
 function UserService(db) {
 
@@ -40,7 +39,6 @@ function UserService(db) {
             });
         });
     };
-
 }
 
 module.exports = UserService;
