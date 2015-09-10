@@ -19,9 +19,17 @@
         //////////////////////////////////////////
 
         function createConversation(userList) {
-            $http.post("api/conversations", {
+            $http.post("/api/conversations", {
                 users : userList
             }).success(pollConversations).error(errorService.broadcast);
+        }
+
+        function addMessage(conversationId, message) {
+            $http.post("/api/conversations/" + conversationId + "/messages", message)
+                .success(function() {
+                    pollConversation(currentConversation.id);
+                })
+                .error(errorService.broadcast);
         }
 
         function getConversations() {
