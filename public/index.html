@@ -1,21 +1,36 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="ChatApp">
-    <head>
-        <meta charset="utf-8">
-        <title>Chat</title>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.1/angular.min.js"></script>
-        <script src="js/main.js"></script>
-    </head>
-    <body ng-controller="ChatController">
-        <a ng-show="!loggedIn" href="{{loginUri}}">Log in</a>
-        <section ng-show="loggedIn">
-            <p>Logged in as {{user.name}}.</p>
-            <h2>List of registered users</h2>
-            <ul>
-                <li ng-repeat="user in users">
-                    {{user.name}}
-                </li>
-            </ul>
-        </section>
-    </body>
+<head>
+    <meta charset="utf-8">
+    <title>Chat</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.1/angular.min.js"></script>
+    <script src="js/main.js"></script>
+</head>
+<body ng-controller="ChatController as vm">
+<a ng-show="!vm.loggedIn" href="{{vm.loginUri}}">Log in</a>
+<section ng-show="vm.loggedIn">
+    <p>Logged in as {{vm.user.name}}.</p>
+
+    <h2>List of registered users</h2>
+    <ul>
+        <li ng-repeat="user in vm.users">
+            {{user.name}}
+        </li>
+    </ul>
+    <h2>List of conversations</h2>
+    <ul>
+        <li ng-repeat="conversation in vm.conversations">
+            {{conversation}}
+        </li>
+    </ul>
+</section>
+
+
+<!-- Controllers -->
+<script src="js/controllers/ChatController.js"></script>
+
+<!-- Services -->
+<script src="js/services/conversationService.js"></script>
+
+</body>
 </html>
