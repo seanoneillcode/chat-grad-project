@@ -1,7 +1,7 @@
 (function() {
     angular.module("ChatApp").factory("conversationService", conversationService);
 
-    function conversationService($http, $rootScope, $interval) {
+    function conversationService($http, $rootScope, $interval, errorService) {
         var service = {
             getConversations: getConversations,
             getConversation: getConversation,
@@ -20,7 +20,7 @@
         }
 
         function getConversation(id) {
-            return $http.get("/api/conversations/" + id);
+            return $http.get("/api/conversations/" + id).error(errorService.broadcast);
         }
         function startService() {
             if (!serviceStarted) {
@@ -30,14 +30,13 @@
         }
 
         function pollConversations() {
-            return $http.get("/api/conversations").success(function(data) {
-                if (data.length > conversations.length) {
-                    conversations = data;
-                    broadcastConversations(conversations);
-                }
-            }).error(function(text, status) {
-                console.log("ERROR", text, status);
-            });
+            return $http.get("/api/conversations")
+                .success(function(data) {
+                    if (data.length > conversations.length) {
+                        conversations = data;
+                        broadcastConversations(conversations);
+                    }
+                }).error(errorService.broadcast);
         }
 
         function broadcastConversations(data) {
