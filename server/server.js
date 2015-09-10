@@ -157,6 +157,7 @@ module.exports = function (port, db, githubAuthoriser) {
             var id = req.params.id;
             var message = req.body;
             message.conversation = ObjectId(id);
+            message.timestamp = Date.now();
             cService.getConversation(id)
                 .then(function() {
                     return uService.userExists(message.sender);
