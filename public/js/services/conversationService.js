@@ -10,9 +10,7 @@
         };
 
         var conversations = [];
-        $interval(pollConversations, 1000);
-        pollConversations();
-
+        var serviceStarted = false;
         return service;
 
         //////////////////////////////////////////
@@ -22,12 +20,13 @@
         }
 
         function getConversation(id) {
-            return $http.get("/api/conversations/" + id)
+            return $http.get("/api/conversations/" + id);
         }
-
         function startService() {
-            $interval(pollConversations, 1000);
-            pollConversations();
+            if (!serviceStarted) {
+                $interval(pollConversations, 1000);
+                pollConversations();
+            }
         }
 
         function pollConversations() {
