@@ -5,7 +5,9 @@
   "quotmark": "double",
   "undef": true,
   "browser": true,
+  "proto" : true,
   "globals": {
-    "angular": true
+    "angular": true,
+    "console" : true
   }
 }
