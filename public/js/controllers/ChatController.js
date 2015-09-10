@@ -8,6 +8,7 @@ angular.module("ChatApp").controller("ChatController",
         vm.loggedIn = false;
 
         deregisters.push($rootScope.$on("conversationsChanged", reloadConversations));
+        deregisters.push($rootScope.$on("currentConversation", reloadCurrentConversation));
 
         $http.get("/api/user").then(function (userResult) {
             vm.loggedIn = true;
@@ -26,9 +27,12 @@ angular.module("ChatApp").controller("ChatController",
             vm.conversations = conversationService.getConversations();
         }
 
-        vm.getConversation = function (id) {
-            conversationService.getConversation(id).success(function (data) {
-                vm.currentConversation = data;
-            });
+        vm.setConversation = function (id) {
+            conversationService.watchConversation(id);
         };
+
+        function reloadCurrentConversation() {
+            vm.currentConversation = conversationService.getCurrentConversation();
+        }
+
     });
