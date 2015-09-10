@@ -24,4 +24,10 @@ angular.module("ChatApp").controller("ChatController", function ($scope, $rootSc
     function reloadConversations() {
         vm.conversations = conversationService.getConversations();
     }
+
+    vm.getConversation = function(id) {
+        conversationService.getConversation(id).success(function(data) {
+            vm.currentConversation = data;
+        });
+    };
 });

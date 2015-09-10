@@ -4,6 +4,7 @@
     function conversationService($http, $rootScope, $interval) {
         var service = {
             getConversations: getConversations,
+            getConversation: getConversation,
             pollConversations: pollConversations,
             startService: startService
         };
@@ -18,6 +19,10 @@
 
         function getConversations() {
             return conversations;
+        }
+
+        function getConversation(id) {
+            return $http.get("/api/conversations/" + id)
         }
 
         function startService() {
