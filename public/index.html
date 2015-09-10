@@ -13,12 +13,24 @@
     <p>Logged in as {{vm.user.name}}.</p>
 
     <h2>List of registered users</h2>
+
     <ul>
         <li ng-repeat="user in vm.users">
             <img alt="@{{user._id}}" class="gravatar" height="30" ng-src="{{user.avatarUrl}}&amp;s=60" width="30">
             {{user.name}}
         </li>
     </ul>
+
+    <div class="conversation-form">
+        <h2>Create a conversation</h2>
+        <select name="multipleSelect" id="multipleSelect" ng-model="vm.selectedUsers" multiple>
+            <option ng-repeat="user in vm.users" value="{{user.id}}">
+                <img alt="@{{user._id}}" class="gravatar" height="30" ng-src="{{user.avatarUrl}}&amp;s=60" width="30">
+                {{user.name}}
+            </option>
+        </select><br>
+        <button ng-click="vm.createConversation()">Chin wag with these folks</button>
+    </div>
     <h2>List of conversations</h2>
     <ul>
         <li ng-repeat="conversation in vm.conversations" >

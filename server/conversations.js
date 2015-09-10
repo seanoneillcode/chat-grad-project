@@ -38,9 +38,11 @@ function ConversationService(db) {
     };
 
     this.marshalConversation = function (conversation) {
-        conversation.messages.forEach(function(message) {
-            message.sender = findUser(conversation.users, message.sender);
-        });
+        if (conversation.messages !== undefined) {
+            conversation.messages.forEach(function(message) {
+                message.sender = findUser(conversation.users, message.sender);
+            });
+        }
         return {
             id: conversation._id,
             users: conversation.users,

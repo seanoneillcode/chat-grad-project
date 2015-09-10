@@ -26,15 +26,15 @@ var testGithubUser = {
 
 var testConversation = {
     _id: "55eeb2cce4b0966f47937878",
-    users: ["bob", "charlie"],
-    messages: ["testMsg1"]
+    users: ["tim", "bob", "charlie"]
+    //messages: ["testMsg1"]
 };
 
 var testMessage = {
     _id: "55eeb8c4e4b0966f47937928",
     content: "Test Message",
     timestamp: "1234",
-    sender: "bob"
+    sender: "charlie"
 };
 
 var testToken = "123123";
@@ -355,7 +355,6 @@ describe("server", function () {
                         {
                             id: "55eeb2cce4b0966f47937878",
                             users: [testUser, testUser2],
-                            messages: ["testMsg1"]
                         }
                     ]);
                     done();
@@ -475,7 +474,7 @@ describe("server", function () {
                 _id: "55eeb8c4e4b0966f47937928",
                 content: "Test Message",
                 timestamp: "1234",
-                sender: "bob"
+                sender: "charlie"
             };
         });
         it("responds with status code 401 if user not authenticated", function (done) {
