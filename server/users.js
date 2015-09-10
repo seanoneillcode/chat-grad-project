@@ -1,5 +1,4 @@
 var Promise = require("promise");
-var mongo = require("mongodb");
 
 function UserService(db) {
 
@@ -23,6 +22,23 @@ function UserService(db) {
         });
     };
 
+    this.userListExists = function (userList) {
+        return new Promise.all(userList.map(self.userExists));
+    };
+
+    this.userExists = function (userId) {
+        return new Promise(function (resolve, reject) {
+            users.findOne({_id: userId}, function (err, user) {
+                if (err) {
+                    reject({code: 500, msg: err});
+                } else if (user === null) {
+                    reject({code: 404, msg: "User not found " + userId});
+                } else {
+                    resolve();
+                }
+            });
+        });
+    };
 }
 
 module.exports = UserService;

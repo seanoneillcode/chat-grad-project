@@ -3,6 +3,7 @@ var cookieParser = require("cookie-parser");
 var ConversationService = require("./conversations.js");
 var UserService = require("./users.js");
 var MessageService = require("./messages.js");
+var bodyParser = require("body-parser");
 
 var ObjectId = require("mongodb").ObjectID;
 
@@ -11,13 +12,13 @@ module.exports = function (port, db, githubAuthoriser) {
     var router = express.Router();
 
     app.use(express.static("public"));
-
+    app.use(bodyParser.json());
     app.use(cookieParser());
-    var users = db.collection("users");
+
     var conversations = db.collection("conversations");
+    var users = db.collection("users");
     var messages = db.collection("messages");
     var sessions = {};
-
     var cService = new ConversationService(db);
     var uService = new UserService(db);
     var mService = new MessageService(db);
@@ -111,6 +112,20 @@ module.exports = function (port, db, githubAuthoriser) {
                     res.sendStatus(500);
                 }
             );
+        })
+        .post(function (req, res) {
+            var conversation = req.body;
+            uService.userListExists(conversation.users)
+                .then(function() {
+                    return cService.insertOne(conversation);
+                })
+                .then(function() {
+                    res.sendStatus(201);
+                })
+                .catch(function(err) {
+                    res.sendStatus(err.code);
+                });
+
         });
 
     router.route("/conversations/:id")
@@ -125,15 +140,36 @@ module.exports = function (port, db, githubAuthoriser) {
                     .then(mService.expandMessages)
                     .then(cService.marshalConversation)
                     .then(
-                    function (conversation) {
-                        res.json(conversation);
-                    })
+                        function (conversation) {
+                            res.json(conversation);
+                        })
                     .catch(
-                    function (err) {
-                        res.sendStatus(err.code);
-                    }
+                        function (err) {
+                            res.sendStatus(err.code);
+                        }
                 );
             }
+        });
+
+    router.route("/conversations/:id/messages")
+        .post(function (req, res) {
+            var id = req.params.id;
+            var message = req.body;
+            message.conversation = ObjectId(id);
+            cService.getConversation(id)
+                .then(function() {
+                    return uService.userExists(message.sender);
+                })
+                .then(function() {
+                    return mService.insertOne(message);
+                })
+                .then(function() {
+                    res.sendStatus(201);
+                })
+                .catch(function(err) {
+                    res.set("responseText", err.msg);
+                    res.sendStatus(err.code);
+                });
         });
 
     app.use("/api", router);

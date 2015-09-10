@@ -56,12 +56,12 @@ describe("server", function () {
             conversations: {
                 find: sinon.stub(),
                 findOne: sinon.stub(),
-                insertOne: sinon.spy()
+                insertOne: sinon.stub()
             },
             messages: {
                 find: sinon.stub(),
                 findOne: sinon.stub(),
-                insertOne: sinon.spy()
+                insertOne: sinon.stub()
             }
         };
         db = {
@@ -372,6 +372,85 @@ describe("server", function () {
             });
         });
     });
+    describe("POST /api/conversations", function () {
+        var requestUrl = baseUrl + "/api/conversations";
+        var allConversations;
+        var allUsers;
+        var validConversation = {users : ["thullSL", "fakeTest"]};
+        beforeEach(function () {
+            allConversations = {
+                toArray: sinon.stub()
+            };
+            dbCollections.conversations.find.returns(allConversations);
+            allUsers = {
+                toArray: sinon.stub()
+            };
+            dbCollections.users.find.returns(allUsers);
+        });
+        it("responds with status code 401 if user not authenticated", function (done) {
+            request.post({
+                url: requestUrl,
+                json: validConversation
+            }, function (error, response) {
+                assert.equal(response.statusCode, 401);
+                done();
+            });
+        });
+        it("responds with status code 401 if user has an unrecognised session token", function (done) {
+            cookieJar.setCookie(request.cookie("sessionToken=" + testExpiredToken), baseUrl);
+            request.post({url: requestUrl, json: validConversation, jar: cookieJar}, function (error, response) {
+                assert.equal(response.statusCode, 401);
+                done();
+            });
+        });
+        it("responds with status code 201 if user is authenticated && valid object", function (done) {
+            authenticateUser(testUser, testToken, function () {
+                dbCollections.users.findOne.callsArgOnWith(1, null , null, testUser);
+                dbCollections.conversations.insertOne.callsArgOnWith(1,
+                    null , null, {insertedId : testConversation._id});
+
+                request.post({url: requestUrl, json: validConversation, jar: cookieJar}, function (error, response) {
+                    assert.equal(response.statusCode, 201);
+                    done();
+                });
+            });
+        });
+        it("responds with status code 404 if user not found", function (done) {
+            authenticateUser(testUser, testToken, function () {
+                validConversation.users[0] = "not a user";
+                dbCollections.users.findOne.callsArgOnWith(1, null , null, null);
+                dbCollections.conversations.insertOne.callsArg(1);
+
+                request.post({url: requestUrl, json: validConversation, jar: cookieJar}, function (error, response) {
+                    assert.equal(response.statusCode, 404);
+                    done();
+                });
+            });
+        });
+        it("responds with status code 500 user lookup fails", function (done) {
+            authenticateUser(testUser, testToken, function () {
+                validConversation.users[0] = "not a user";
+                dbCollections.users.findOne.callsArgOnWith(1, null ,  {err: "Database failure"}, testUser);
+
+                request.post({url: requestUrl, json: validConversation, jar: cookieJar}, function (error, response) {
+                    assert.equal(response.statusCode, 500);
+                    done();
+                });
+            });
+        });
+        it("responds with status code 500 if insert fails", function (done) {
+            authenticateUser(testUser, testToken, function () {
+                validConversation.users[0] = "not a user";
+                dbCollections.users.findOne.callsArgOnWith(1, null , null, testUser);
+                dbCollections.conversations.insertOne.callsArgOnWith(1, null , {err: "Database failure"}, null);
+
+                request.post({url: requestUrl, json: validConversation, jar: cookieJar}, function (error, response) {
+                    assert.equal(response.statusCode, 500);
+                    done();
+                });
+            });
+        });
+    });
     describe("GET /api/conversations/:id", function () {
         var allConversations;
         var allUsers;
@@ -517,6 +596,72 @@ describe("server", function () {
 
                 request({url: requestUrl, jar: cookieJar}, function (error, response) {
                     assert.equal(response.statusCode, 404);
+                    done();
+                });
+            });
+        });
+    });
+    describe("POST /api/conversations/:id/messages", function () {
+        var allConversations;
+        var allUsers;
+        var allMessages;
+        var requestUrl;
+        var message;
+        beforeEach(function () {
+            message = {sender: "thullSL", content : "I'm a content", timestamp: "123"};
+            requestUrl = baseUrl + "/api/conversations/" + testConversation._id + "/messages";
+            allConversations = {
+                toArray: sinon.stub()
+            };
+            dbCollections.conversations.find.returns(allConversations);
+            allUsers = {
+                toArray: sinon.stub()
+            };
+            dbCollections.users.find.returns(allUsers);
+            allMessages = {
+                toArray: sinon.stub()
+            };
+            dbCollections.messages.find.returns(allMessages);
+        });
+        it("responds with status code 401 if user not authenticated", function (done) {
+            request.post({
+                url: requestUrl,
+                json: message
+            }, function (error, response) {
+                assert.equal(response.statusCode, 401);
+                done();
+            });
+        });
+        it("responds with status code 401 if user has an unrecognised session token", function (done) {
+            cookieJar.setCookie(request.cookie("sessionToken=" + testExpiredToken), baseUrl);
+            request.post({url: requestUrl, json: message, jar: cookieJar}, function (error, response) {
+                assert.equal(response.statusCode, 401);
+                done();
+            });
+        });
+
+        it("responds with status code 201 if message is created", function (done) {
+            authenticateUser(testUser, testToken, function () {
+                dbCollections.conversations.findOne.callsArgOnWith(1, null, null, testConversation);
+                dbCollections.users.findOne.callsArgOnWith(1, null, null, testUser);
+                dbCollections.messages.insertOne.callsArgOnWith(1,
+                    null , null, {insertedId : "55f05cb30790229c083c2a00"});
+
+                request.post({url: requestUrl, jar: cookieJar}, function (error, response) {
+                    assert.equal(response.statusCode, 201);
+                    done();
+                });
+            });
+        });
+        it("responds with status code 500 if message insert fails", function (done) {
+            authenticateUser(testUser, testToken, function () {
+                dbCollections.conversations.findOne.callsArgOnWith(1, null, null, testConversation);
+                dbCollections.users.findOne.callsArgOnWith(1, null, null, testUser);
+                dbCollections.messages.insertOne.callsArgOnWith(1,
+                    null , {err : "Database failure"}, null);
+
+                request.post({url: requestUrl, jar: cookieJar}, function (error, response) {
+                    assert.equal(response.statusCode, 500);
                     done();
                 });
             });
