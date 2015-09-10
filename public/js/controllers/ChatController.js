@@ -32,7 +32,7 @@ angular.module("ChatApp").controller("ChatController",
         };
 
         vm.createConversation = function() {
-            var userList = vm.selectedUsers.splice();
+            var userList = vm.selectedUsers.slice();
             userList.push(vm.user._id);
             conversationService.createConversation(userList);
         };

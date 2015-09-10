@@ -109,6 +109,7 @@ module.exports = function (port, db, githubAuthoriser) {
                     res.json(conversations);
                 },
                 function (err) {
+                    res.set("responseText", err.msg);
                     res.sendStatus(500);
                 }
             );
