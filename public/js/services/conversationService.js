@@ -7,7 +7,8 @@
             getConversations: getConversations,
             getCurrentConversation: getCurrentConversation,
             watchConversation: watchConversation,
-            createConversation: createConversation
+            createConversation: createConversation,
+            addMessage: addMessage
         };
 
         var conversations = [];
@@ -42,7 +43,7 @@
 
         function startService() {
             if (!serviceStarted) {
-                $interval(pollConversations, 10000);
+                $interval(pollConversations, 1000);
                 pollConversations();
             }
         }

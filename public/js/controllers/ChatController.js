@@ -37,6 +37,11 @@ angular.module("ChatApp").controller("ChatController",
             conversationService.createConversation(userList);
         };
 
+        vm.sendMessage = function() {
+            conversationService.addMessage(vm.currentConversation.id, vm.message);
+            vm.message = {};
+        };
+
         function reloadCurrentConversation() {
             vm.currentConversation = conversationService.getCurrentConversation();
         }
