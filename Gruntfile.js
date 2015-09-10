@@ -54,7 +54,7 @@ module.exports = function(grunt) {
             all: {
                 script: "server.js",
                 options : {
-                    ignore : ["public/", "Gruntfile.js"]
+                    ignore : ["public/", "Gruntfile.js", "build_artifacts"]
                 }
             }
         }
