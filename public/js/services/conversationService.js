@@ -19,7 +19,7 @@
         //////////////////////////////////////////
 
         function createConversation(userList) {
-            $http.post("api/conversation", {
+            $http.post("api/conversations", {
                 users : userList
             }).success(pollConversations).error(errorService.broadcast);
         }
