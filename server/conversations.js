@@ -6,9 +6,9 @@ function ConversationService(db) {
     var conversations = db.collection("conversations");
     var self = this;
 
-    this.getConversations = function () {
+    this.getConversations = function (user) {
         return new Promise(function (resolve, reject) {
-            conversations.find().toArray(function (err, conversations) {
+            conversations.find({users: user}).toArray(function (err, conversations) {
                 if (err) {
                     reject({code: 500, msg: err});
                 } else {
