@@ -23,10 +23,10 @@ function UserService(db) {
     };
 
     this.userListExists = function (userList) {
-        return new Promise.all(userList.map(self.userExists));
+        return new Promise.all(userList.map(self.getUser));
     };
 
-    this.userExists = function (userId) {
+    this.getUser = function (userId) {
         return new Promise(function (resolve, reject) {
             users.findOne({_id: userId}, function (err, user) {
                 if (err) {
@@ -34,7 +34,7 @@ function UserService(db) {
                 } else if (user === null) {
                     reject({code: 404, msg: "User not found " + userId});
                 } else {
-                    resolve();
+                    resolve(user);
                 }
             });
         });

@@ -1,6 +1,5 @@
 var Promise = require("promise");
 var mongo = require("mongodb");
-var UserService = require("./users.js");
 
 function MessageService(db) {
 

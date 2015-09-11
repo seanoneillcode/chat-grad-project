@@ -161,7 +161,7 @@ module.exports = function (port, db, githubAuthoriser) {
             message.timestamp = Date.now();
             cService.getConversation(id)
                 .then(function() {
-                    return uService.userExists(message.sender);
+                    return uService.getUser(message.sender);
                 })
                 .then(function() {
                     return mService.insertOne(message);
