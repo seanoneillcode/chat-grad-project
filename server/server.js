@@ -101,7 +101,7 @@ module.exports = function (port, db, githubAuthoriser) {
 
     router.route("/conversations")
         .get(function (req, res) {
-            cService.getConversations()
+            cService.getConversations(req.session.user)
                 .then(uService.expandUsersForList)
                 .then(cService.marshalConversationList)
                 .then(
@@ -161,7 +161,7 @@ module.exports = function (port, db, githubAuthoriser) {
             message.timestamp = Date.now();
             cService.getConversation(id)
                 .then(function() {
-                    return uService.userExists(message.sender);
+                    return uService.getUser(message.sender);
                 })
                 .then(function() {
                     return mService.insertOne(message);
