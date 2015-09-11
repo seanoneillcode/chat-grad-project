@@ -1,0 +1,8 @@
+<h2>List of registered users</h2>
+
+<ul>
+    <li ng-repeat="user in um.users">
+        <img alt="@{{user._id}}" class="gravatar" height="30" ng-src="{{user.avatarUrl}}&amp;s=60" width="30">
+        {{user.name}}
+    </li>
+</ul>

@@ -1,0 +1,20 @@
+<div class="conversation-form">
+    <h2>Create a conversation</h2>
+    <select name="multipleSelect" id="multipleSelect" ng-model="cm.selectedUsers" multiple>
+        <option ng-repeat="user in cm.users" value="{{user.id}}">
+            <img alt="@{{user._id}}" class="gravatar" height="30" ng-src="{{user.avatarUrl}}&amp;s=60" width="30">
+            {{user.name}}
+        </option>
+    </select><br>
+    <button ng-click="cm.createConversation()">Chin wag with these folks</button>
+</div>
+<h2>List of conversations</h2>
+<ul>
+    <li ng-repeat="conversation in cm.conversations" >
+        <div class="member-list" ng-repeat="user in conversation.users | filter:{ _id : '!' + vm.user._id}">
+            <img alt="@{{user._id}}" class="gravatar" height="30" ng-src="{{user.avatarUrl}}&amp;s=60" width="30">
+            {{user.name}}
+        </div>
+        <a href="/#/conversations/{{conversation.id}}" >show</a>
+    </li>
+</ul>
