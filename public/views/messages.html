@@ -1,0 +1,20 @@
+<div class="full-conversation" ng-if="mm.currentConversation !== undefined">
+    <h2>Conversation</h2>
+    <div class="message" ng-repeat="message in mm.currentConversation.messages">
+        <div ng-if="message.sender._id !== mm.user._id" >
+            <img class="gravatar" height="30" ng-src="{{message.sender.avatarUrl}}&amp;s=60" width="30">
+            {{message.content}}
+        </div>
+        <div ng-if="message.sender._id === mm.user._id" >
+            {{message.content}}
+            <img class="gravatar" height="30" ng-src="{{message.sender.avatarUrl}}&amp;s=60" width="30">
+        </div>
+    </div>
+    <div class="new-message">
+        <form>
+            <input type="text" ng-model="mm.message.content" placeholder="What would you like to say...."
+                   ng-required="true" ng-minlength="1">
+            <input type="submit" ng-click="mm.sendMessage()" value="Send" />
+        </form>
+    </div>
+</div>

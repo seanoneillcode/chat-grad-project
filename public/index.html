@@ -4,73 +4,37 @@
     <meta charset="utf-8">
     <title>Chat</title>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.1/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.1/angular-route.js"></script>
     <script src="js/main.js"></script>
     <link href="css/main.css" rel="stylesheet" type="text/css">
+    <base href="/">
 </head>
 <body ng-controller="ChatController as vm">
 <a ng-show="!vm.loggedIn" href="{{vm.loginUri}}">Log in</a>
 <section ng-show="vm.loggedIn">
     <p>Logged in as {{vm.user.name}}.</p>
 
-    <h2>List of registered users</h2>
+    <a href="/#/users">Users</a>
+    <a href="/#/conversations">Conversations</a>
 
-    <ul>
-        <li ng-repeat="user in vm.users">
-            <img alt="@{{user._id}}" class="gravatar" height="30" ng-src="{{user.avatarUrl}}&amp;s=60" width="30">
-            {{user.name}}
-        </li>
-    </ul>
-
-    <div class="conversation-form">
-        <h2>Create a conversation</h2>
-        <select name="multipleSelect" id="multipleSelect" ng-model="vm.selectedUsers" multiple>
-            <option ng-repeat="user in vm.users" value="{{user.id}}">
-                <img alt="@{{user._id}}" class="gravatar" height="30" ng-src="{{user.avatarUrl}}&amp;s=60" width="30">
-                {{user.name}}
-            </option>
-        </select><br>
-        <button ng-click="vm.createConversation()">Chin wag with these folks</button>
-    </div>
-    <h2>List of conversations</h2>
-    <ul>
-        <li ng-repeat="conversation in vm.conversations" >
-            <div class="member-list" ng-repeat="user in conversation.users | filter:{ _id : '!' + vm.user._id}">
-                <img alt="@{{user._id}}" class="gravatar" height="30" ng-src="{{user.avatarUrl}}&amp;s=60" width="30">
-                {{user.name}}
-            </div>
-            <button ng-click="vm.setConversation(conversation.id)" >show</button>
-        </li>
-    </ul>
-
-    <div class="full-conversation" ng-if="vm.currentConversation !== undefined">
-        <h2>Conversation</h2>
-        <div class="message" ng-repeat="message in vm.currentConversation.messages">
-            <div ng-if="message.sender._id !== vm.user._id" >
-                <img class="gravatar" height="30" ng-src="{{message.sender.avatarUrl}}&amp;s=60" width="30">
-                {{message.content}}
-            </div>
-            <div ng-if="message.sender._id === vm.user._id" >
-                {{message.content}}
-                <img class="gravatar" height="30" ng-src="{{message.sender.avatarUrl}}&amp;s=60" width="30">
-            </div>
-        </div>
-        <div class="new-message">
-            <form>
-                <input type="text" ng-model="vm.message.content" placeholder="What would you like to say...."
-                       ng-required="true" ng-minlength="1">
-                <input type="submit" ng-click="vm.sendMessage()" value="Send" />
-            </form>
-        </div>
+    <div class="view-animate-container">
+        <div ng-view class="view-animate"></div>
     </div>
 </section>
 
 
 <!-- Controllers -->
 <script src="js/controllers/ChatController.js"></script>
+<script src="js/controllers/UsersController.js"></script>
+<script src="js/controllers/ConversationsController.js"></script>
+<script src="js/controllers/MessageController.js"></script>
 
 <!-- Services -->
-<script src="js/services/conversationService.js"></script>
+<script src="js/services/sessionService.js"></script>
+<script src="js/services/userService.js"></script>
 <script src="js/services/errorService.js"></script>
+<script src="js/services/conversationService.js"></script>
+<script src="js/services/messageService.js"></script>
 
 </body>
 </html>

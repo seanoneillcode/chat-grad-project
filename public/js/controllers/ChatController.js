@@ -1,49 +1,28 @@
 angular.module("ChatApp").controller("ChatController",
-    function ($scope, $rootScope, $http, $filter, conversationService) {
+    function ($scope, $rootScope, sessionService) {
 
         var vm = this;
         var deregisters = [];
 
-        vm.conversations = [];
+        deregisters.push($rootScope.$on("authEvent", authEvent));
+        $scope.$on("$destroy", destroyThis);
+
         vm.loggedIn = false;
 
-        deregisters.push($rootScope.$on("conversationsChanged", reloadConversations));
-        deregisters.push($rootScope.$on("currentConversation", reloadCurrentConversation));
+        sessionService.fetchUser();
 
-        $http.get("/api/user").then(function (userResult) {
-            vm.loggedIn = true;
-            vm.user = userResult.data;
-            conversationService.startService();
-            $http.get("/api/users").then(function (result) {
-                vm.users = result.data;
-            });
-        }, function () {
-            $http.get("/api/oauth/uri").then(function (result) {
-                vm.loginUri = result.data.uri;
-            });
-        });
-
-        function reloadConversations() {
-            vm.conversations = conversationService.getConversations();
+        function authEvent(event, loggedIn, resultOb) {
+            vm.loggedIn = loggedIn;
+            if (loggedIn) {
+                vm.user = resultOb;
+            } else {
+                vm.loginUri = resultOb;
+            }
         }
 
-        vm.setConversation = function (id) {
-            conversationService.watchConversation(id);
-        };
-
-        vm.createConversation = function() {
-            var userList = vm.selectedUsers.slice();
-            userList.push(vm.user._id);
-            conversationService.createConversation(userList);
-        };
-
-        vm.sendMessage = function() {
-            conversationService.addMessage(vm.currentConversation.id, vm.message);
-            vm.message = {};
-        };
-
-        function reloadCurrentConversation() {
-            vm.currentConversation = conversationService.getCurrentConversation();
+        function destroyThis() {
+            deregisters.forEach(function (watch) {
+                watch();
+            });
         }
-
     });

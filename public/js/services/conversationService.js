@@ -1,91 +1,57 @@
-(function() {
+(function () {
     angular.module("ChatApp").factory("conversationService", conversationService);
 
-    function conversationService($http, $rootScope, $interval, errorService) {
+    function conversationService($http, $rootScope, $interval, errorService, sessionService) {
         var service = {
-            startService: startService,
             getConversations: getConversations,
-            getCurrentConversation: getCurrentConversation,
-            watchConversation: watchConversation,
-            createConversation: createConversation,
-            addMessage: addMessage
+            createConversation: createConversation
         };
 
         var conversations = [];
-        var serviceStarted = false;
-        var currentConversation;
-        var currentWatchPromise;
+        var deregisters = [];
+        var poll;
+        var self = this;
+
+        deregisters.push($rootScope.$on("authEvent", startService));
+        if (sessionService.loggedIn()) {
+            startService(null, true);
+        }
         return service;
 
         //////////////////////////////////////////
 
         function createConversation(userList) {
             $http.post("/api/conversations", {
-                users : userList
+                users: userList
             }).success(pollConversations).error(errorService.broadcast);
         }
 
-        function addMessage(conversationId, message) {
-            $http.post("/api/conversations/" + conversationId + "/messages", message)
-                .success(function() {
-                    pollConversation(currentConversation.id);
-                })
-                .error(errorService.broadcast);
-        }
-
         function getConversations() {
-            return conversations;
+            return self.conversations;
         }
 
-        function getCurrentConversation() {
-            return currentConversation;
-        }
-
-        function startService() {
-            if (!serviceStarted) {
-                $interval(pollConversations, 1000);
+        function startService(event, loggedIn) {
+            if (loggedIn) {
+                poll = $interval(pollConversations, 1000);
                 pollConversations();
+            } else {
+                $interval.cancel(poll);
             }
-        }
-
-        function watchConversation(conversationId) {
-            if (currentWatchPromise !== undefined) {
-                $interval.cancel(currentWatchPromise);
-            }
-            currentWatchPromise = $interval(function() {
-                pollConversation(conversationId);
-            }, 1000);
-            pollConversation(conversationId);
         }
 
         function pollConversations() {
             return $http.get("/api/conversations")
-                .success(function(data) {
+                .success(function (data) {
                     if (data.length > conversations.length) {
-                        conversations = data;
+                        self.conversations = data;
                         broadcastConversations(conversations);
                     }
                 }).error(errorService.broadcast);
         }
 
-        function pollConversation(id) {
-            return $http.get("/api/conversations/" + id).success(function(data) {
-                if (currentConversation === undefined ||
-                    data.messages.length > currentConversation.messages.length ||
-                    data.id !== currentConversation.id) {
-                    currentConversation = data;
-                    broadcastMessage(currentConversation);
-                }
-            }).error(errorService.broadcast);
-        }
-
         function broadcastConversations(data) {
             $rootScope.$broadcast("conversationsChanged");
             return data;
-        }
-
-        function broadcastMessage(data) {
-            $rootScope.$broadcast("currentConversation");
         }
     }
 })();
