@@ -10,13 +10,17 @@
     <base href="/">
 </head>
 <body class="body" ng-controller="ChatController as vm"><!-- href="{{vm.loginUri}}"-->
-<md-content  ng-show="!vm.loggedIn" class="button-container">
+<md-content ng-show="!vm.loggedIn" class="button-container md-whiteframe-z3">
+
     <h3 class="md-headline">Werlcome to the chat app, home of the chat app.</h3>
+
     <h3 class="md-subhead">Login to chat app</h3>
     <br/>
-    <md-button class="md-raised md-primary log-in-button" href="{{vm.loginUri}}" >Log in</md-button>
+    <md-button class="md-raised md-primary log-in-button" href="{{vm.loginUri}}">Log in</md-button>
 </md-content>
-<section ng-show="vm.loggedIn">
+
+<md-content ng-show="vm.loggedIn" class="chats-container md-whiteframe-z3">
+
     <p>Logged in as {{vm.user.name}}.</p>
 
     <a href="/#/users">Users</a>
@@ -25,7 +29,7 @@
     <div class="view-animate-container">
         <div ng-view class="view-animate"></div>
     </div>
-</section>
+</md-content>
 
 
 <!-- Angular Material Dependencies -->

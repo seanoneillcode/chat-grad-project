@@ -22,3 +22,12 @@ body {
     align-items: center;
     justify-content: center;
 }
+
+.chats-container{
+    height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 30%
+}

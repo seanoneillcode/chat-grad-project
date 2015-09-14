@@ -1,7 +1,10 @@
-angular.module("ChatApp", ["ngRoute", "ngMaterial"])
+angular.module("ChatApp", ["ngRoute", "ngMaterial", "ngAnimate"])
     .config(["$routeProvider", "$locationProvider",
         function ($routeProvider) {
             $routeProvider
+                .when("/", {
+                    redirectTo: '/conversations'
+                })
                 .when("/users", {
                     templateUrl: "views/users.html",
                     controller: "UsersController",
