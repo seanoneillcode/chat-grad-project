@@ -58,18 +58,18 @@ module.exports = function (port, db, githubAuthoriser) {
         });
     });
 
-    app.use(function (req, res, next) {
-        if (req.cookies.sessionToken) {
-            req.session = sessions[req.cookies.sessionToken];
-            if (req.session) { ////////////////////////////////////
-                next();
-            } else {
-                res.sendStatus(401);
-            }
-        } else {
-            res.sendStatus(401);
-        }
-    });
+    //app.use(function (req, res, next) {
+    //    if (req.cookies.sessionToken) {
+    //        req.session = sessions[req.cookies.sessionToken];
+    //        if (req.session) { ////////////////////////////////////
+    //            next();
+    //        } else {
+    //            res.sendStatus(401);
+    //        }
+    //    } else {
+    //        res.sendStatus(401);
+    //    }
+    //});
 
     app.get("/api/user", function (req, res) {
         users.findOne({
@@ -119,7 +119,7 @@ module.exports = function (port, db, githubAuthoriser) {
             var consUsers = [req.session.user];
             conversation.users.forEach(function (user) {
                 if (consUsers.indexOf(user) < 0) {
-                    consUsers.push(user);
+                    consUsers.push({id: user, lastRead: 0});
                 }
             });
             conversation.users = consUsers;
@@ -132,8 +132,7 @@ module.exports = function (port, db, githubAuthoriser) {
                 })
                 .catch(function (err) {
                     res.sendStatus(err.code);
-                });
-
+                })
         });
 
     router.route("/conversations/:id")
@@ -157,6 +156,22 @@ module.exports = function (port, db, githubAuthoriser) {
                     }
                 );
             }
+        });
+
+
+    router.route("/conversations/:conversation/user/:user")
+        .put(function (req, res) {
+            var conversationId = req.params.conversation;
+            var userId = req.params.user;
+            console.log(conversationId,userId);
+            cService.updateLastRead(conversationId, userId).then(function(update) {
+                res.json(update);
+            }).catch(function (err) {
+                res.set("responseText", err.msg);
+                res.sendStatus(err.code);
+            });
+
+
         });
 
     router.route("/conversations/:id/messages")

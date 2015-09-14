@@ -23,7 +23,9 @@ function UserService(db) {
     };
 
     this.userListExists = function (userList) {
-        return new Promise.all(userList.map(self.getUser));
+        return new Promise.all(userList.map(function(user) {
+            self.getUser(user.id);
+        }));
     };
 
     this.getUser = function (userId) {

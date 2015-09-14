@@ -18,6 +18,25 @@ function ConversationService(db) {
         });
     };
 
+    this.updateLastRead = function (conversationId, userId) {
+        return new Promise(function (resolve, reject) {
+            conversations.update({
+                _id: mongo.ObjectID(conversationId),
+                users: {$elemMatch: {id: userId}}
+            }, {$currentDate: {"users.$.lastRead": true}}, function (err, conversation) {
+                console.log(err, conversation);
+                if (err) {
+                    reject({code: 500, msg: err});
+                } else if (conversation === null) {
+                    reject({code: 404, msg: err});
+                }
+                else {
+                    resolve(conversation);
+                }
+            });
+        });
+    };
+
     this.getConversation = function (id) {
         return new Promise(function (resolve, reject) {
             conversations.findOne({_id: mongo.ObjectID(id)}, function (err, conversation) {
@@ -39,7 +58,7 @@ function ConversationService(db) {
 
     this.marshalConversation = function (conversation) {
         if (conversation.messages !== undefined) {
-            conversation.messages.forEach(function(message) {
+            conversation.messages.forEach(function (message) {
                 message.sender = findUser(conversation.users, message.sender);
             });
         }
