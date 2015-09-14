@@ -1,4 +1,4 @@
-angular.module("ChatApp", ["ngRoute","ngMaterial"])
+angular.module("ChatApp", ["ngRoute", "ngMaterial"])
     .config(["$routeProvider", "$locationProvider",
         function ($routeProvider) {
             $routeProvider
