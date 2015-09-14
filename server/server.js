@@ -84,25 +84,21 @@ module.exports = function (port, db, githubAuthoriser) {
     });
 
     app.get("/api/users", function (req, res) {
-        users.find().toArray(function (err, docs) {
-            if (!err) {
-                res.json(docs.map(function (user) {
-                    return {
-                        id: user._id,
-                        name: user.name,
-                        avatarUrl: user.avatarUrl
-                    };
-                }));
-            } else {
-                res.sendStatus(500);
-            }
-        });
+        uService.getUsers()
+            .then(uService.marshalUserList)
+            .then(function (users) {
+                res.json(users);
+            })
+            .catch(function (err) {
+                res.set("responseText", err.msg);
+                res.sendStatus(err.code);
+            });
     });
 
     router.route("/conversations")
         .get(function (req, res) {
             cService.getConversations(req.session.user)
-                .then(uService.expandUsersForList)
+                //.then(uService.expandUsersForList)
                 .then(cService.marshalConversationList)
                 .then(
                 function (conversations) {
@@ -116,17 +112,26 @@ module.exports = function (port, db, githubAuthoriser) {
         })
         .post(function (req, res) {
             var conversation = req.body;
+            var consUsers = [req.session.user];
+
+            conversation.users.forEach(function (user) {
+                if (consUsers.indexOf(user) < 0) {
+                    consUsers.push(user);
+                }
+            });
+            conversation.users = consUsers.map(function(user) {
+                return {id: user, lastRead: 0};
+            });
             uService.userListExists(conversation.users)
-                .then(function() {
+                .then(function () {
                     return cService.insertOne(conversation);
                 })
-                .then(function() {
+                .then(function () {
                     res.sendStatus(201);
                 })
-                .catch(function(err) {
+                .catch(function (err) {
                     res.sendStatus(err.code);
                 });
-
         });
 
     router.route("/conversations/:id")
@@ -137,19 +142,32 @@ module.exports = function (port, db, githubAuthoriser) {
                 res.sendStatus(400);
             } else {
                 cService.getConversation(id)
-                    .then(uService.expandUsers)
+                    //.then(uService.expandUsers)
                     .then(mService.expandMessages)
                     .then(cService.marshalConversation)
                     .then(
-                        function (conversation) {
-                            res.json(conversation);
-                        })
+                    function (conversation) {
+                        res.json(conversation);
+                    })
                     .catch(
-                        function (err) {
-                            res.sendStatus(err.code);
-                        }
+                    function (err) {
+                        res.sendStatus(err.code);
+                    }
                 );
             }
+        });
+
+    router.route("/conversations/:conversation/user/:user")
+        .put(function (req, res) {
+            var conversationId = req.params.conversation;
+            var userId = req.params.user;
+            cService.updateLastRead(conversationId, userId).then(function (update) {
+                res.json(update);
+            }).catch(function (err) {
+                res.set("responseText", err.msg);
+                res.sendStatus(err.code);
+            });
+
         });
 
     router.route("/conversations/:id/messages")
@@ -160,16 +178,16 @@ module.exports = function (port, db, githubAuthoriser) {
             message.sender = req.session.user;
             message.timestamp = Date.now();
             cService.getConversation(id)
-                .then(function() {
+                .then(function () {
                     return uService.getUser(message.sender);
                 })
-                .then(function() {
+                .then(function () {
                     return mService.insertOne(message);
                 })
-                .then(function() {
+                .then(function () {
                     res.sendStatus(201);
                 })
-                .catch(function(err) {
+                .catch(function (err) {
                     res.set("responseText", err.msg);
                     res.sendStatus(err.code);
                 });

@@ -8,11 +8,29 @@ function ConversationService(db) {
 
     this.getConversations = function (user) {
         return new Promise(function (resolve, reject) {
-            conversations.find({users: user}).toArray(function (err, conversations) {
+            conversations.find({"users.id": user}).toArray(function (err, conversations) {
                 if (err) {
                     reject({code: 500, msg: err});
                 } else {
                     resolve(conversations);
+                }
+            });
+        });
+    };
+
+    this.updateLastRead = function (conversationId, userId) {
+        return new Promise(function (resolve, reject) {
+            conversations.update({
+                _id: mongo.ObjectID(conversationId),
+                users: {$elemMatch: {id: userId}}
+            }, {$currentDate: {"users.$.lastRead": true}}, function (err, conversation) {
+                if (err) {
+                    reject({code: 500, msg: err});
+                } else if (conversation === null) {
+                    reject({code: 404, msg: err});
+                }
+                else {
+                    resolve(conversation);
                 }
             });
         });
@@ -38,26 +56,12 @@ function ConversationService(db) {
     };
 
     this.marshalConversation = function (conversation) {
-        if (conversation.messages !== undefined) {
-            conversation.messages.forEach(function(message) {
-                message.sender = findUser(conversation.users, message.sender);
-            });
-        }
         return {
             id: conversation._id,
             users: conversation.users,
             messages: conversation.messages
         };
     };
-
-    function findUser(userList, userId) {
-        for (var i = 0; i < userList.length; i++) {
-            if (userList[i]._id === userId) {
-                return userList[i];
-            }
-        }
-    }
-
     this.insertOne = function (conversation) {
         return new Promise(function (resolve, reject) {
             conversations.insertOne(conversation, function (err, result) {

@@ -2,7 +2,6 @@
     <h2>Create a conversation</h2>
     <select name="multipleSelect" id="multipleSelect" ng-model="cm.selectedUsers" multiple>
         <option ng-repeat="user in cm.users" value="{{user.id}}">
-            <img alt="@{{user._id}}" class="gravatar" height="30" ng-src="{{user.avatarUrl}}&amp;s=60" width="30">
             {{user.name}}
         </option>
     </select><br>

@@ -11,10 +11,20 @@ angular.module("ChatApp").controller("ConversationsController",
 
         function usersEvent(event, users) {
             cm.users = users;
+            reloadConversations();
         }
 
         function reloadConversations() {
-            cm.conversations = conversationService.getConversations();
+            var conversations = conversationService.getConversations();
+            conversations.forEach(function (conversation) {
+                conversation.users.forEach(function (user) {
+                    if (userService.getUser(user.id)) {
+                        user.name = userService.getUser(user.id).name;
+                        user.avatarUrl = userService.getUser(user.id).avatarUrl;
+                    }
+                });
+            });
+            cm.conversations = conversations;
         }
 
         cm.createConversation = function () {
@@ -22,4 +32,5 @@ angular.module("ChatApp").controller("ConversationsController",
             userList.push(cm.user._id);
             conversationService.createConversation(userList);
         };
+
     });
