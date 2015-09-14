@@ -14,7 +14,7 @@
     <h3 class="md-headline">Werlcome to the chat app, home of the chat app.</h3>
     <h3 class="md-subhead">Login to chat app</h3>
     <br/>
-    <md-button class="md-raised md-primary log-in-button" ng-show="!vm.loggedIn">Log in</md-button>
+    <md-button class="md-raised md-primary log-in-button" href="{{vm.loginUri}}" ng-show="!vm.loggedIn">Log in</md-button>
 </md-content>
 <section ng-show="vm.loggedIn">
     <p>Logged in as {{vm.user.name}}.</p>
