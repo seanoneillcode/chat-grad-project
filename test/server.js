@@ -26,7 +26,7 @@ var testGithubUser = {
 
 var testConversation = {
     _id: "55eeb2cce4b0966f47937878",
-    users: ["tim", "bob", "charlie"]
+    users: [{id: "tim", timestamp: 0}, {id: "bob", timestamp: 0}, {id: "charlie", timestamp: 0}]
     //messages: ["testMsg1"]
 };
 
@@ -57,7 +57,8 @@ describe("server", function () {
             conversations: {
                 find: sinon.stub(),
                 findOne: sinon.stub(),
-                insertOne: sinon.stub()
+                insertOne: sinon.stub(),
+                update: sinon.stub()
             },
             messages: {
                 find: sinon.stub(),
@@ -345,18 +346,15 @@ describe("server", function () {
         it("responds with a body that is a JSON of the conversations if user is authenticated", function (done) {
             authenticateUser(testUser, testToken, function () {
                 allConversations.toArray.callsArgWith(0, null, [testConversation]);
-                allUsers.toArray.callsArgWith(0, null, [
-                    testUser,
-                    testUser2
-                ]);
-
                 request({url: requestUrl, jar: cookieJar}, function (error, response, body) {
-                    assert.deepEqual(JSON.parse(body), [
+                    assert.deepEqual([
                         {
                             id: "55eeb2cce4b0966f47937878",
-                            users: [testUser, testUser2],
+                            users: [{id: "tim", timestamp: 0},
+                                {id: "bob", timestamp: 0},
+                                {id: "charlie", timestamp: 0}]
                         }
-                    ]);
+                    ], JSON.parse(body));
                     done();
                 });
             });
@@ -376,7 +374,7 @@ describe("server", function () {
         var requestUrl = baseUrl + "/api/conversations";
         var allConversations;
         var allUsers;
-        var validConversation = {users : ["thullSL", "fakeTest", "bob", undefined]};
+        var validConversation = {users: ["thullSL", "fakeTest", "bob"]};
         beforeEach(function () {
             allConversations = {
                 toArray: sinon.stub()
@@ -405,9 +403,9 @@ describe("server", function () {
         });
         it("responds with status code 201 if user is authenticated && valid object", function (done) {
             authenticateUser(testGithubUser, testToken, function () {
-                dbCollections.users.findOne.callsArgOnWith(1, null , null, testUser);
+                dbCollections.users.findOne.callsArgOnWith(1, null, null, testUser);
                 dbCollections.conversations.insertOne.callsArgOnWith(1,
-                    null , null, {insertedId : testConversation._id});
+                    null, null, {insertedId: testConversation._id});
 
                 request.post({url: requestUrl, json: validConversation, jar: cookieJar}, function (error, response) {
                     assert.equal(response.statusCode, 201);
@@ -416,9 +414,9 @@ describe("server", function () {
             });
         });
         it("responds with status code 404 if user not found", function (done) {
-            authenticateUser(testUser, testToken, function () {
+            authenticateUser(testGithubUser, testToken, function () {
                 validConversation.users[0] = "not a user";
-                dbCollections.users.findOne.callsArgOnWith(1, null , null, null);
+                dbCollections.users.findOne.callsArgOnWith(1, null, null, null);
                 dbCollections.conversations.insertOne.callsArg(1);
 
                 request.post({url: requestUrl, json: validConversation, jar: cookieJar}, function (error, response) {
@@ -428,9 +426,9 @@ describe("server", function () {
             });
         });
         it("responds with status code 500 user lookup fails", function (done) {
-            authenticateUser(testUser, testToken, function () {
+            authenticateUser(testGithubUser, testToken, function () {
                 validConversation.users[0] = "not a user";
-                dbCollections.users.findOne.callsArgOnWith(1, null ,  {err: "Database failure"}, testUser);
+                dbCollections.users.findOne.callsArgOnWith(1, null, {err: "Database failure"}, testUser);
 
                 request.post({url: requestUrl, json: validConversation, jar: cookieJar}, function (error, response) {
                     assert.equal(response.statusCode, 500);
@@ -439,10 +437,10 @@ describe("server", function () {
             });
         });
         it("responds with status code 500 if insert fails", function (done) {
-            authenticateUser(testUser, testToken, function () {
+            authenticateUser(testGithubUser, testToken, function () {
                 validConversation.users[0] = "not a user";
-                dbCollections.users.findOne.callsArgOnWith(1, null , null, testUser);
-                dbCollections.conversations.insertOne.callsArgOnWith(1, null , {err: "Database failure"}, null);
+                dbCollections.users.findOne.callsArgOnWith(1, null, null, testUser);
+                dbCollections.conversations.insertOne.callsArgOnWith(1, null, {err: "Database failure"}, null);
 
                 request.post({url: requestUrl, json: validConversation, jar: cookieJar}, function (error, response) {
                     assert.equal(response.statusCode, 500);
@@ -502,7 +500,7 @@ describe("server", function () {
         });
         it("responds with status code 200 if user is authenticated", function (done) {
             authenticateUser(testUser, testToken, function () {
-                dbCollections.conversations.findOne.callsArgOnWith(1, null , null, testConversation);
+                dbCollections.conversations.findOne.callsArgOnWith(1, null, null, testConversation);
                 allUsers.toArray.callsArgWith(0, null, [
                     testUser,
                     testUser2
@@ -520,7 +518,7 @@ describe("server", function () {
 
         it("responds with a body that is a JSON of the conversations if user is authenticated", function (done) {
             authenticateUser(testUser, testToken, function () {
-                dbCollections.conversations.findOne.callsArgOnWith(1, null , null, testConversation);
+                dbCollections.conversations.findOne.callsArgOnWith(1, null, null, testConversation);
                 allUsers.toArray.callsArgWith(0, null, [
                     testUser,
                     testUser2
@@ -533,7 +531,9 @@ describe("server", function () {
                     assert.deepEqual(JSON.parse(body),
                         {
                             id: "55eeb2cce4b0966f47937878",
-                            users: [testUser, testUser2],
+                            users: [{id: "tim", timestamp: 0},
+                                {id: "bob", timestamp: 0},
+                                {id: "charlie", timestamp: 0}],
                             messages: [testMessage]
                         }
                     );
@@ -543,7 +543,7 @@ describe("server", function () {
         });
         it("responds with status code 500 if database on conversation find one", function (done) {
             authenticateUser(testUser, testToken, function () {
-                dbCollections.conversations.findOne.callsArgOnWith(1, null , {err: "Database failure"}, null);
+                dbCollections.conversations.findOne.callsArgOnWith(1, null, {err: "Database failure"}, null);
                 allUsers.toArray.callsArgWith(0, null, [
                     testUser,
                     testUser2
@@ -558,23 +558,9 @@ describe("server", function () {
                 });
             });
         });
-        it("responds with status code 500 if database on users", function (done) {
-            authenticateUser(testUser, testToken, function () {
-                dbCollections.conversations.findOne.callsArgOnWith(1, null , null, testConversation);
-                allUsers.toArray.callsArgWith(0, "Database failure", null);
-                allMessages.toArray.callsArgWith(0, null, [testMessage]);
-                mongo.ObjectID = sinon.stub();
-                mongo.ObjectID.returnsArg(0);
-
-                request({url: requestUrl, jar: cookieJar}, function (error, response) {
-                    assert.equal(response.statusCode, 500);
-                    done();
-                });
-            });
-        });
         it("responds with status code 500 if database on MESSAGES", function (done) {
             authenticateUser(testUser, testToken, function () {
-                dbCollections.conversations.findOne.callsArgOnWith(1, null , null, testConversation);
+                dbCollections.conversations.findOne.callsArgOnWith(1, null, null, testConversation);
                 allUsers.toArray.callsArgWith(0, null, [
                     testUser,
                     testUser2
@@ -591,7 +577,7 @@ describe("server", function () {
         });
         it("responds with status code 404 missing conversation", function (done) {
             authenticateUser(testUser, testToken, function () {
-                dbCollections.conversations.findOne.callsArgOnWith(1, null , null, null);
+                dbCollections.conversations.findOne.callsArgOnWith(1, null, null, null);
                 allUsers.toArray.callsArgWith(0, null, [
                     testUser,
                     testUser2
@@ -614,7 +600,7 @@ describe("server", function () {
         var requestUrl;
         var message;
         beforeEach(function () {
-            message = {sender: "thullSL", content : "I'm a content", timestamp: "123"};
+            message = {sender: "thullSL", content: "I'm a content", timestamp: "123"};
             requestUrl = baseUrl + "/api/conversations/" + testConversation._id + "/messages";
             allConversations = {
                 toArray: sinon.stub()
@@ -651,7 +637,7 @@ describe("server", function () {
                 dbCollections.conversations.findOne.callsArgOnWith(1, null, null, testConversation);
                 dbCollections.users.findOne.callsArgOnWith(1, null, null, testUser);
                 dbCollections.messages.insertOne.callsArgOnWith(1,
-                    null , null, {insertedId : "55f05cb30790229c083c2a00"});
+                    null, null, {insertedId: "55f05cb30790229c083c2a00"});
 
                 request.post({url: requestUrl, jar: cookieJar}, function (error, response) {
                     assert.equal(response.statusCode, 201);
@@ -664,10 +650,78 @@ describe("server", function () {
                 dbCollections.conversations.findOne.callsArgOnWith(1, null, null, testConversation);
                 dbCollections.users.findOne.callsArgOnWith(1, null, null, testUser);
                 dbCollections.messages.insertOne.callsArgOnWith(1,
-                    null , {err : "Database failure"}, null);
+                    null, {err: "Database failure"}, null);
 
                 request.post({url: requestUrl, jar: cookieJar}, function (error, response) {
                     assert.equal(response.statusCode, 500);
+                    done();
+                });
+            });
+        });
+    });
+
+    describe("PUT /api/conversations/:conversation/user/:user", function () {
+        var allConversations;
+        var allUsers;
+        var allMessages;
+        var requestUrl;
+        var message;
+        beforeEach(function () {
+            message = {sender: "thullSL", content: "I'm a content", timestamp: "123"};
+            requestUrl = baseUrl + "/api/conversations/" + testConversation._id + "/user/" + testUser._id;
+            allConversations = {
+                toArray: sinon.stub()
+            };
+            dbCollections.conversations.find.returns(allConversations);
+            allUsers = {
+                toArray: sinon.stub()
+            };
+            dbCollections.users.find.returns(allUsers);
+            allMessages = {
+                toArray: sinon.stub()
+            };
+            dbCollections.messages.find.returns(allMessages);
+        });
+        it("responds with status code 401 if user not authenticated", function (done) {
+            request.put({
+                url: requestUrl,
+                json: message
+            }, function (error, response) {
+                assert.equal(response.statusCode, 401);
+                done();
+            });
+        });
+        it("responds with status code 401 if user has an unrecognised session token", function (done) {
+            cookieJar.setCookie(request.cookie("sessionToken=" + testExpiredToken), baseUrl);
+            request.put({url: requestUrl, json: message, jar: cookieJar}, function (error, response) {
+                assert.equal(response.statusCode, 401);
+                done();
+            });
+        });
+
+        it("responds with status code 200 if last read updated", function (done) {
+            authenticateUser(testUser, testToken, function () {
+                dbCollections.conversations.update.callsArgOnWith(2, null, null, testConversation);
+                request.put({url: requestUrl, jar: cookieJar}, function (error, response) {
+                    assert.equal(response.statusCode, 200);
+                    done();
+                });
+            });
+        });
+        it("responds with status code 500 if update fails", function (done) {
+            authenticateUser(testUser, testToken, function () {
+                dbCollections.conversations.update.callsArgOnWith(2, null, "ERROROR", null);
+                request.put({url: requestUrl, jar: cookieJar}, function (error, response) {
+                    assert.equal(response.statusCode, 500);
+                    done();
+                });
+            });
+        });
+        it("responds with status code 404 if message insert fails", function (done) {
+            authenticateUser(testUser, testToken, function () {
+                dbCollections.conversations.update.callsArgOnWith(2, null, null, null);
+                request.put({url: requestUrl, jar: cookieJar}, function (error, response) {
+                    assert.equal(response.statusCode, 404);
                     done();
                 });
             });

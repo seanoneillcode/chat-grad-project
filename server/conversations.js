@@ -24,7 +24,6 @@ function ConversationService(db) {
                 _id: mongo.ObjectID(conversationId),
                 users: {$elemMatch: {id: userId}}
             }, {$currentDate: {"users.$.lastRead": true}}, function (err, conversation) {
-                console.log(err, conversation);
                 if (err) {
                     reject({code: 500, msg: err});
                 } else if (conversation === null) {
@@ -57,26 +56,12 @@ function ConversationService(db) {
     };
 
     this.marshalConversation = function (conversation) {
-        if (conversation.messages !== undefined) {
-            conversation.messages.forEach(function (message) {
-                message.sender = findUser(conversation.users, message.sender);
-            });
-        }
         return {
             id: conversation._id,
             users: conversation.users,
             messages: conversation.messages
         };
     };
-
-    function findUser(userList, userId) {
-        for (var i = 0; i < userList.length; i++) {
-            if (userList[i]._id === userId) {
-                return userList[i];
-            }
-        }
-    }
-
     this.insertOne = function (conversation) {
         return new Promise(function (resolve, reject) {
             conversations.insertOne(conversation, function (err, result) {
