@@ -1,5 +1,5 @@
 angular.module("ChatApp").controller("MessagesController",
-    function ($scope, $rootScope, $http, $filter, $routeParams, messageService, sessionService) {
+    function ($scope, $rootScope, $http, $filter, $routeParams, messageService, sessionService, userService) {
         var mm = this;
         var deregisters = [];
         var conversationId = $routeParams.conversationId;
@@ -7,6 +7,7 @@ angular.module("ChatApp").controller("MessagesController",
 
         deregisters.push($rootScope.$on("authEvent", updateUser));
         deregisters.push($rootScope.$on("currentConversation", reloadCurrentConversation));
+        //deregisters.push($rootScope.$on("usersEvent", reloadCurrentConversation()));
         $scope.$on("$destroy", destroyThis);
 
         if (sessionService.loggedIn()) {
@@ -19,6 +20,15 @@ angular.module("ChatApp").controller("MessagesController",
 
         function reloadCurrentConversation() {
             mm.currentConversation = messageService.getCurrentConversation();
+            mm.currentConversation.messages.forEach(function (message) {
+                var senderId = message.sender;
+                message.sender = {};
+                if (userService.getUser(senderId)) {
+                    message.sender.id = senderId;
+                    message.sender.name = userService.getUser(senderId).name;
+                    message.sender.avatarUrl = userService.getUser(senderId).avatarUrl;
+                }
+            });
         }
 
         function destroyThis() {
@@ -34,6 +44,14 @@ angular.module("ChatApp").controller("MessagesController",
             } else {
                 mm.user = undefined;
             }
+        }
+
+        function getUserAvatarUrl(id) {
+            return userService.getUser(id).avatarUrl;
+        }
+
+        function getUserName(id) {
+            return userService.getUser(id).name;
         }
 
     });
