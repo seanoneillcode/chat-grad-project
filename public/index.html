@@ -10,11 +10,11 @@
     <base href="/">
 </head>
 <body class="body" ng-controller="ChatController as vm"><!-- href="{{vm.loginUri}}"-->
-<md-content class="button-container">
+<md-content  ng-show="!vm.loggedIn" class="button-container">
     <h3 class="md-headline">Werlcome to the chat app, home of the chat app.</h3>
     <h3 class="md-subhead">Login to chat app</h3>
     <br/>
-    <md-button class="md-raised md-primary log-in-button" ng-show="!vm.loggedIn">Log in</md-button>
+    <md-button class="md-raised md-primary log-in-button" href="{{vm.loginUri}}" >Log in</md-button>
 </md-content>
 <section ng-show="vm.loggedIn">
     <p>Logged in as {{vm.user.name}}.</p>
