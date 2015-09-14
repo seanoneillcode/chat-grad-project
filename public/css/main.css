@@ -1,3 +1,24 @@
 .member-list{
     display: inline-block;
 }
+.log-in-button {
+    max-width: 50%;
+}
+.button-container {
+    max-width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.52) !important;
+    /*transform: translateX(-50%);*/
+}
+
+body {
+    background-image: url(/images/background.jpg);
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
