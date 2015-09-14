@@ -7,10 +7,10 @@
             createConversation: createConversation
         };
 
-        var conversations = [];
         var deregisters = [];
         var poll;
         var self = this;
+        self.conversations = [];
 
         deregisters.push($rootScope.$on("authEvent", startService));
         if (sessionService.loggedIn()) {
@@ -42,9 +42,9 @@
         function pollConversations() {
             return $http.get("/api/conversations")
                 .success(function (data) {
-                    if (data.length > conversations.length) {
+                    if (data.length > self.conversations.length) {
                         self.conversations = data;
-                        broadcastConversations(conversations);
+                        broadcastConversations(self.conversations);
                     }
                 }).error(errorService.broadcast);
         }

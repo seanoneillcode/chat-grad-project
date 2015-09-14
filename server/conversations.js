@@ -8,7 +8,7 @@ function ConversationService(db) {
 
     this.getConversations = function (user) {
         return new Promise(function (resolve, reject) {
-            conversations.find({users: user}).toArray(function (err, conversations) {
+            conversations.find({"users.id": user}).toArray(function (err, conversations) {
                 if (err) {
                     reject({code: 500, msg: err});
                 } else {
