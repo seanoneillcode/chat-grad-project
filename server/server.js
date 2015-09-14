@@ -116,14 +116,21 @@ module.exports = function (port, db, githubAuthoriser) {
         })
         .post(function (req, res) {
             var conversation = req.body;
+            var consUsers = [req.session.user];
+            conversation.users.forEach(function (user) {
+                if (consUsers.indexOf(user) < 0) {
+                    consUsers.push(user);
+                }
+            });
+            conversation.users = consUsers;
             uService.userListExists(conversation.users)
-                .then(function() {
+                .then(function () {
                     return cService.insertOne(conversation);
                 })
-                .then(function() {
+                .then(function () {
                     res.sendStatus(201);
                 })
-                .catch(function(err) {
+                .catch(function (err) {
                     res.sendStatus(err.code);
                 });
 
@@ -141,13 +148,13 @@ module.exports = function (port, db, githubAuthoriser) {
                     .then(mService.expandMessages)
                     .then(cService.marshalConversation)
                     .then(
-                        function (conversation) {
-                            res.json(conversation);
-                        })
+                    function (conversation) {
+                        res.json(conversation);
+                    })
                     .catch(
-                        function (err) {
-                            res.sendStatus(err.code);
-                        }
+                    function (err) {
+                        res.sendStatus(err.code);
+                    }
                 );
             }
         });
@@ -160,16 +167,16 @@ module.exports = function (port, db, githubAuthoriser) {
             message.sender = req.session.user;
             message.timestamp = Date.now();
             cService.getConversation(id)
-                .then(function() {
+                .then(function () {
                     return uService.getUser(message.sender);
                 })
-                .then(function() {
+                .then(function () {
                     return mService.insertOne(message);
                 })
-                .then(function() {
+                .then(function () {
                     res.sendStatus(201);
                 })
-                .catch(function(err) {
+                .catch(function (err) {
                     res.set("responseText", err.msg);
                     res.sendStatus(err.code);
                 });

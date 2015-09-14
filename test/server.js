@@ -376,7 +376,7 @@ describe("server", function () {
         var requestUrl = baseUrl + "/api/conversations";
         var allConversations;
         var allUsers;
-        var validConversation = {users : ["thullSL", "fakeTest"]};
+        var validConversation = {users : ["thullSL", "fakeTest", "bob", undefined]};
         beforeEach(function () {
             allConversations = {
                 toArray: sinon.stub()
@@ -404,7 +404,7 @@ describe("server", function () {
             });
         });
         it("responds with status code 201 if user is authenticated && valid object", function (done) {
-            authenticateUser(testUser, testToken, function () {
+            authenticateUser(testGithubUser, testToken, function () {
                 dbCollections.users.findOne.callsArgOnWith(1, null , null, testUser);
                 dbCollections.conversations.insertOne.callsArgOnWith(1,
                     null , null, {insertedId : testConversation._id});
