@@ -5,6 +5,7 @@
     <title>Chat</title>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.10.1/angular-material.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <link href="css/main.css" rel="stylesheet" type="text/css">
     <base href="/">
@@ -17,7 +18,7 @@
 
         <h3 class="md-subhead">Login to chat app</h3>
         <br/>
-        <md-button class="md-raised md-primary log-in-button" href="{{vm.loginUri}}">Log in</md-button>
+        <md-button class="md-raised md-accent md-hue-3 log-in-button" href="{{vm.loginUri}}">Log in</md-button>
     </md-content>
 </div>
 <div ng-show="vm.loggedIn" class="full-div" layout="vertical">
@@ -27,8 +28,8 @@
             <h3 class="md-subhead">Logged in as {{vm.user.name}}.</h3>
 
             <div>
-                <md-button class="md-raised" href="/#/users">Users</md-button>
-                <md-button class="md-raised" href="/#/conversations">Conversations</md-button>
+                <md-button class="md-raised md-accent" href="/#/users">Users</md-button>
+                <md-button class="md-raised md-accent" href="/#/conversations">Conversations</md-button>
             </div>
         </md-toolbar>
         <div layout-align="center" layout>

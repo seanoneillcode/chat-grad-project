@@ -20,4 +20,9 @@ angular.module("ChatApp", ["ngRoute", "ngMaterial", "ngAnimate"])
                     controller: "MessagesController",
                     controllerAs: "mm"
                 });
-        }]);
+        }])
+    .config(function ($mdThemingProvider) {
+        $mdThemingProvider.theme("default")
+            .primaryPalette("grey")
+            .accentPalette("orange");
+    });
