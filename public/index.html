@@ -10,26 +10,40 @@
     <base href="/">
 </head>
 <body class="body" ng-controller="ChatController as vm"><!-- href="{{vm.loginUri}}"-->
-<md-content ng-show="!vm.loggedIn" class="button-container md-whiteframe-z3">
+<div class="full-div login-container" ng-show="!vm.loggedIn">
+    <md-content class="button-container md-whiteframe-z3">
 
-    <h3 class="md-headline">Werlcome to the chat app, home of the chat app.</h3>
+        <h3 class="md-headline">Werlcome to the chat app, home of the chat app.</h3>
 
-    <h3 class="md-subhead">Login to chat app</h3>
-    <br/>
-    <md-button class="md-raised md-primary log-in-button" href="{{vm.loginUri}}">Log in</md-button>
-</md-content>
+        <h3 class="md-subhead">Login to chat app</h3>
+        <br/>
+        <md-button class="md-raised md-primary log-in-button" href="{{vm.loginUri}}">Log in</md-button>
+    </md-content>
+</div>
+<div class="full-div" layout="vertical">
+    <md-content layout="column" layout-padding offset-sm="5" offset="25" flex-sm="90" flex="50" ng-show="vm.loggedIn"
+                class="chats-container md-whiteframe-z3">
+        <md-toolbar layout-padding>
+            <h3 class="md-subhead">Logged in as {{vm.user.name}}.</h3>
 
-<md-content ng-show="vm.loggedIn" class="chats-container md-whiteframe-z3">
+            <div>
+                <md-button class="md-raised" href="/#/users">Users</md-button>
+                <md-button class="md-raised" href="/#/conversations">Conversations</md-button>
+            </div>
+        </md-toolbar>
+        <div layout-align="center" layout>
+            <!--<p>Logged in as {{vm.user.name}}.</p>-->
 
-    <p>Logged in as {{vm.user.name}}.</p>
+            <!--<a href="/#/users">Users</a>-->
+            <!--<a href="/#/conversations">Conversations</a>-->
 
-    <a href="/#/users">Users</a>
-    <a href="/#/conversations">Conversations</a>
-
-    <div class="view-animate-container">
-        <div ng-view class="view-animate"></div>
-    </div>
-</md-content>
+            <div class="view-animate-container">
+                <div ng-view class="view-animate"></div>
+            </div>
+        </div>
+    </md-content>
+    <!--<div flex="33"></div>-->
+</div>
 
 
 <!-- Angular Material Dependencies -->

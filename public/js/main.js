@@ -3,7 +3,7 @@ angular.module("ChatApp", ["ngRoute", "ngMaterial", "ngAnimate"])
         function ($routeProvider) {
             $routeProvider
                 .when("/", {
-                    redirectTo: '/conversations'
+                    redirectTo: "/conversations"
                 })
                 .when("/users", {
                     templateUrl: "views/users.html",
