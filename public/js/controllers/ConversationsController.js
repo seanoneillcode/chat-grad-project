@@ -3,14 +3,23 @@ angular.module("ChatApp").controller("ConversationsController",
         var cm = this;
         var deregisters = [];
         cm.conversations = conversationService.getConversations();
-        cm.users = userService.getUsers();
+        //cm.users = userService.getUsers();
         cm.user = sessionService.getUser();
+        cm.filterSeleceted = true;
+        cm.selectedUsers = [];
+
+        usersEvent(null, userService.getUsers());
 
         deregisters.push($rootScope.$on("conversationsChanged", reloadConversations));
         deregisters.push($rootScope.$on("usersEvent", usersEvent));
 
         function usersEvent(event, users) {
-            cm.users = users;
+            cm.users = users.map(function (user, index) {
+                user.email = user.id + "@github.com";
+                user._lowername = user.name.toLowerCase();
+                return user;
+            });
+
             reloadConversations();
         }
 
@@ -28,9 +37,23 @@ angular.module("ChatApp").controller("ConversationsController",
         }
 
         cm.createConversation = function () {
-            var userList = cm.selectedUsers.slice();
-            userList.push(cm.user._id);
+            var userList = cm.selectedUsers.map(function (user) {
+                return user.id;
+            });
             conversationService.createConversation(userList);
         };
+
+        cm.querySearch = function (query) {
+            var results = query ?
+                cm.users.filter(createFilterFor(query)) : [];
+            return results;
+        };
+
+        function createFilterFor(query) {
+            var lowercaseQuery = angular.lowercase(query);
+            return function filterFn(contact) {
+                return (contact.name.toLowerCase().indexOf(lowercaseQuery) !== -1);
+            };
+        }
 
     });
