@@ -3,29 +3,43 @@
 <head>
     <meta charset="utf-8">
     <title>Chat</title>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.10.1/angular-material.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <link href="css/main.css" rel="stylesheet" type="text/css">
     <base href="/">
 </head>
 <body class="body" ng-controller="ChatController as vm"><!-- href="{{vm.loginUri}}"-->
-<md-content  ng-show="!vm.loggedIn" class="button-container">
-    <h3 class="md-headline">Werlcome to the chat app, home of the chat app.</h3>
-    <h3 class="md-subhead">Login to chat app</h3>
-    <br/>
-    <md-button class="md-raised md-primary log-in-button" href="{{vm.loginUri}}" >Log in</md-button>
-</md-content>
-<section ng-show="vm.loggedIn">
-    <p>Logged in as {{vm.user.name}}.</p>
+<div class="full-div login-container" ng-show="!vm.loggedIn">
+    <md-content class="button-container md-whiteframe-z3">
 
-    <a href="/#/users">Users</a>
-    <a href="/#/conversations">Conversations</a>
+        <h3 class="md-headline">Werlcome to the chat app, home of the chat app.</h3>
 
-    <div class="view-animate-container">
-        <div ng-view class="view-animate"></div>
-    </div>
-</section>
+        <h3 class="md-subhead">Login to chat app</h3>
+        <br/>
+        <md-button class="md-raised md-accent md-hue-3 log-in-button" href="{{vm.loginUri}}">Log in</md-button>
+    </md-content>
+</div>
+<div ng-show="vm.loggedIn" class="full-div" layout="vertical">
+    <md-content layout="column" layout-padding offset-sm="5" offset="25" flex-sm="90" flex="50"
+                class="chats-container md-whiteframe-z3">
+        <md-toolbar layout-padding>
+            <h3 class="md-subhead">Logged in as {{vm.user.name}}.</h3>
+
+            <div>
+                <md-button class="md-raised md-accent" href="/#/users">Users</md-button>
+                <md-button class="md-raised md-accent" href="/#/conversations">Conversations</md-button>
+            </div>
+        </md-toolbar>
+        <div layout-align="center" layout>
+            <div class="view-animate-container">
+                <div ng-view class="view-animate"></div>
+            </div>
+        </div>
+    </md-content>
+
+</div>
 
 
 <!-- Angular Material Dependencies -->
@@ -34,7 +48,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.1/angular-route.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.1/angular-animate.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.1/angular-aria.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.10.1/angular-material.min.js"></script>
 
 <!--App-->
 <script src="js/main.js"></script>
