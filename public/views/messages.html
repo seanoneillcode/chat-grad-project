@@ -1,0 +1,41 @@
+<md-content class="height-inherit" layout="column">
+    <md-content layout="column" flex class="md-hue-1 full-conversation" ng-if="mm.currentConversation !== undefined"
+                scroll-glue="mm.glued">
+
+        <div  flex class="message-list" layout="column">
+            <div class="current-conversants">
+            <div class="conversant" ng-repeat="user in mm.currentConversation.users | filter:{ id : '!' + mm.user._id}">
+                <img alt="@{{user.id}}" class="round-avatar" height="30"
+                     ng-src="{{mm.getUserAvatarUrl(user.id)}}&amp;s=60">
+                {{mm.getUserName(user.id)}}&nbsp;
+            </div>
+            </div>
+            <div flex></div>
+            <div  class="message" layout-margin layout-padding layout="row"
+                 ng-repeat="message in mm.currentConversation.messages">
+                <!--message.sender.id === mm.user._id-->
+                <span flex ng-if="message.isSender"></span>
+                <img flex-order="{{message.isSender ? 3 : 1}}" class="gravatar" height="30"
+                     ng-src="{{message.sender.avatarUrl}}&amp;s=60" width="30">
+                <md-content flex-order="2" class=" message-box md-whiteframe-z3" flex-sm="85" flex="50">
+                    {{message.content}}
+                </md-content>
+            </div>
+        </div>
+
+    </md-content>
+    <div class="new-message">
+
+        <form layout="row">
+            <md-input-container flex>
+                <input type="text" ng-model="mm.message.content" placeholder="What would you like to say...."
+                       ng-minlength="1">
+            </md-input-container>
+            <md-input-container md-no-autogrow>
+                <md-button class="md-primary md-raised" ng-click="mm.sendMessage()" value="Send">
+                    <i class="material-icons fab-icon">send</i>
+                </md-button>
+            </md-input-container>
+        </form>
+    </div>
+</md-content>

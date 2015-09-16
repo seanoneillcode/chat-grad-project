@@ -1,0 +1,36 @@
+<h2 class="md-display-1">Chats goin' on up in here</h2>
+<div layout-padding class="md-whiteframe-z1">
+    <div class="conversation-form">
+        <form ng-submit="cm.createConversation()">
+            <div layout="row">
+                <i class="material-icons search-icon" aria-hidden="true">search</i>
+                <md-contact-chips ng-model="cm.selectedUsers"
+                                  md-contact-image="avatarUrl"
+                                  md-contact-name="name"
+                                  md-contact-email="id"
+                                  filter-selected="ctrl.filterSelected"
+                                  placeholder="Type to search for a contact"
+                                  md-contacts="cm.querySearch($query)">
+                </md-contact-chips>
+            </div>
+            <md-button class="md-accent md-hue-3" >Chin wag with these folks</md-button>
+        </form>
+    </div>
+    <div>
+        <hr/>
+        <md-list>
+            <md-list-item ng-click="cm.go('/conversations/' +  conversation.id)" aria-label="get"
+                          ng-repeat="conversation in cm.conversations">
+                <img ng-if="!conversation.isGroup" alt="@{{conversation.users[1].id}}" class="round-avatar" height="30"
+                     ng-src="{{conversation.avatarUrl}}&amp;s=60">
+                <i ng-if="conversation.isGroup" class="material-icons group-icon" aria-hidden="true">group</i>
+
+            <span class="member-list " ng-repeat="user in conversation.users | filter:{ id : '!' + vm.user._id}">
+                {{user.name}}<span ng-if="!$last">,&nbsp;</span>
+            </span>
+                <span ng-if="conversation.users.length === 1">Talkin' to yourself....weirdo</span>
+
+            </md-list-item>
+        </md-list>
+    </div>
+</div>

@@ -5,7 +5,7 @@
 
   "validateParameterSeparator": ", ",
   "validateQuoteMarks": "\"",
-  "safeContextKeyword": "self",
+  "safeContextKeyword": ["self", "vm", "um", "cm", "mm"],
   "requireSpacesInConditionalExpression": true,
   "requireSpacesInFunction": {
     "beforeOpeningCurlyBrace": true

@@ -1,5 +1,5 @@
-[![Circle CI](https://circleci.com/gh/seanworkcode/chat-grad-project/tree/master.svg?style=svg)](https://circleci.com/gh/seanworkcode/chat-grad-project/tree/master)
+[![Circle CI](https://circleci.com/gh/thullSL/chat-grad-project/tree/master.svg?style=svg)](https://circleci.com/gh/thullSL/chat-grad-project/tree/master)
 
-# chat-grad-project
+# grad-chat-app
 
-See it deployed: https://chat-grad-project.herokuapp.com/
+See it deployed: https://grad-chat-app.herokuapp.com/
