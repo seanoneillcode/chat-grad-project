@@ -30,7 +30,7 @@ body {
 }
 
 .chats-container{
-    height: 90%;
+    height: 90vh;
     margin-top: 5%;
     background-color: rgba(255, 255, 255, 0.9) !important;
 }
@@ -66,4 +66,20 @@ body {
 
 .fab-icon {
     margin-top: 7px;
+}
+
+.height-custom {
+    height: 83vh;
+}
+
+.height-inherit {
+    height: inherit;
+}
+
+.new-message {
+    padding-top: 10px;
+}
+
+.message-list {
+    /*flex-direction: column-reverse;*/
 }

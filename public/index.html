@@ -22,7 +22,7 @@
         <md-button class="md-raised md-accent md-hue-3 log-in-button" href="{{vm.loginUri}}">Log in</md-button>
     </md-content>
 </div>
-<div ng-show="vm.loggedIn" class="full-div" layout="vertical">
+<div ng-show="vm.loggedIn" class="full-div" layout>
     <!--<section class="full-div" layout="vertical">-->
     <div layout="column" offset-sm="5" offset="25" flex-sm="90" flex="50"
          class="chats-container md-whiteframe-z3">
@@ -37,11 +37,7 @@
                     class="material-icons fab-icon">mail</i>
             </md-button>
         </md-toolbar>
-        <md-content layout-align="center" layout="row">
-            <div class="view-animate-container">
-                <div ng-view class="view-animate"></div>
-            </div>
-        </md-content>
+        <ng-view autoscroll class="height-custom"></ng-view>
     </div>
     <!--</section>-->
 </div>
@@ -55,6 +51,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.1/angular-aria.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.10.1/angular-material.min.js"></script>
 
+<!--vendor modules-->
 <!--App-->
 <script src="js/main.js"></script>
 
@@ -70,7 +67,6 @@
 <script src="js/services/errorService.js"></script>
 <script src="js/services/conversationService.js"></script>
 <script src="js/services/messageService.js"></script>
-
 
 </body>
 </html>
