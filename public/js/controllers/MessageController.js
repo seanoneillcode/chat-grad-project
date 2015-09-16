@@ -4,6 +4,7 @@ angular.module("ChatApp").controller("MessagesController",
         var deregisters = [];
         var conversationId = $routeParams.conversationId;
         mm.user = sessionService.getUser();
+        mm.glued = true;
 
         deregisters.push($rootScope.$on("authEvent", updateUser));
         deregisters.push($rootScope.$on("currentConversation", reloadCurrentConversation));
@@ -15,7 +16,9 @@ angular.module("ChatApp").controller("MessagesController",
         }
         mm.sendMessage = function () {
             messageService.addMessage(mm.currentConversation.id, mm.message);
+            //mm.currentConversation.messages.push( mm.message);
             mm.message = {};
+            mm.glued = true;
         };
 
         function reloadCurrentConversation(event, data) {
@@ -34,6 +37,7 @@ angular.module("ChatApp").controller("MessagesController",
                     }
                 }
             });
+
         }
 
         function destroyThis() {

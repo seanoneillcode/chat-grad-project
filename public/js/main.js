@@ -1,4 +1,4 @@
-angular.module("ChatApp", ["ngRoute", "ngMaterial", "ngAnimate"])
+angular.module("ChatApp", ["ngRoute", "ngMaterial", "ngAnimate", "luegg.directives"])
     .config(["$routeProvider", "$locationProvider",
         function ($routeProvider) {
             $routeProvider

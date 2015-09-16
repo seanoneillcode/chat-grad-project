@@ -5,6 +5,7 @@
   "quotmark": "double",
   "undef": true,
   "browser": true,
+  "ignore": "vendor/*",
   "globals": {
     "angular": true,
     "console" : true,
