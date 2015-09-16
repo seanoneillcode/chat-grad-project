@@ -23,6 +23,6 @@ angular.module("ChatApp", ["ngRoute", "ngMaterial", "ngAnimate"])
         }])
     .config(function ($mdThemingProvider) {
         $mdThemingProvider.theme("default")
-            .primaryPalette("grey")
-            .accentPalette("orange");
+            .primaryPalette("blue-grey")
+            .accentPalette("deep-orange");
     });

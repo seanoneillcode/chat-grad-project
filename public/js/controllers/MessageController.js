@@ -23,6 +23,9 @@ angular.module("ChatApp").controller("MessagesController",
             mm.currentConversation.messages.forEach(function (message) {
                 var senderId = message.sender;
                 message.sender = {};
+
+                message.isSender = senderId === mm.user._id;
+
                 if (userService.getUser(senderId)) {
                     message.sender.id = senderId;
                     message.sender.name = userService.getUser(senderId).name;

@@ -3,7 +3,8 @@
 <head>
     <meta charset="utf-8">
     <title>Chat</title>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.10.1/angular-material.min.css">
+    <link rel="stylesheet"
+          href="https://ajax.googleapis.com/ajax/libs/angular_material/0.10.1/angular-material.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -22,23 +23,27 @@
     </md-content>
 </div>
 <div ng-show="vm.loggedIn" class="full-div" layout="vertical">
-    <md-content layout="column" layout-padding offset-sm="5" offset="25" flex-sm="90" flex="50"
-                class="chats-container md-whiteframe-z3">
-        <md-toolbar layout-padding>
+    <!--<section class="full-div" layout="vertical">-->
+    <div layout="column" offset-sm="5" offset="25" flex-sm="90" flex="50"
+         class="chats-container md-whiteframe-z3">
+        <md-toolbar layout="row" layout-padding>
             <h3 class="md-subhead">Logged in as {{vm.user.name}}.</h3>
 
-            <div>
-                <md-button class="md-raised md-accent" href="/#/users">Users</md-button>
-                <md-button class="md-raised md-accent" href="/#/conversations">Conversations</md-button>
-            </div>
+            <span flex></span>
+            <md-button class="md-raised md-accent md-fab md-mini" href="/#/users">
+                <i class="material-icons fab-icon">contacts</i>
+            </md-button>
+            <md-button class="md-raised md-accent md-fab md-mini" href="/#/conversations"><i
+                    class="material-icons fab-icon">mail</i>
+            </md-button>
         </md-toolbar>
-        <div layout-align="center" layout>
+        <md-content layout-align="center" layout="row">
             <div class="view-animate-container">
                 <div ng-view class="view-animate"></div>
             </div>
-        </div>
-    </md-content>
-
+        </md-content>
+    </div>
+    <!--</section>-->
 </div>
 
 
