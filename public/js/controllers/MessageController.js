@@ -15,10 +15,12 @@ angular.module("ChatApp").controller("MessagesController",
             messageService.watchConversation(conversationId);
         }
         mm.sendMessage = function () {
-            messageService.addMessage(mm.currentConversation.id, mm.message);
-            //mm.currentConversation.messages.push( mm.message);
-            mm.message = {};
-            mm.glued = true;
+            if(mm.message !== undefined && mm.message.content !== undefined && mm.message.content.length > 0) {
+                messageService.addMessage(mm.currentConversation.id, mm.message);
+                //mm.currentConversation.messages.push( mm.message);
+                mm.message = {};
+                mm.glued = true;
+            }
         };
 
         function reloadCurrentConversation(event, data) {
