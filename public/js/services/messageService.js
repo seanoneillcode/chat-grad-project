@@ -29,13 +29,21 @@
         }
 
         function watchConversation(conversationId) {
-            if (currentWatchPromise !== undefined) {
-                $interval.cancel(currentWatchPromise);
-            }
-            currentWatchPromise = $interval(function () {
+            if (currentConversation !== undefined &&
+                currentConversation.id === conversationId) {
+
+                broadcastMessage(currentConversation);
+            } else {
+                if (currentConversation !== undefined) {
+                    $interval.cancel(currentWatchPromise);
+                }
+
+                currentWatchPromise = $interval(function () {
+                    pollConversation(conversationId);
+                }, 1000);
                 pollConversation(conversationId);
-            }, 1000);
-            pollConversation(conversationId);
+            }
+
         }
 
         function pollConversation(id) {
@@ -50,7 +58,7 @@
         }
 
         function broadcastMessage(data) {
-            $rootScope.$broadcast("currentConversation");
+            $rootScope.$broadcast("currentConversation", data);
         }
     }
 })();

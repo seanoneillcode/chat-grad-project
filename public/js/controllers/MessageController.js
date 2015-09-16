@@ -18,18 +18,20 @@ angular.module("ChatApp").controller("MessagesController",
             mm.message = {};
         };
 
-        function reloadCurrentConversation() {
-            mm.currentConversation = messageService.getCurrentConversation();
+        function reloadCurrentConversation(event, data) {
+            mm.currentConversation = data;
             mm.currentConversation.messages.forEach(function (message) {
-                var senderId = message.sender;
-                message.sender = {};
+                if (typeof message.sender === "string") {
+                    var senderId = message.sender;
+                    message.sender = {};
 
-                message.isSender = senderId === mm.user._id;
+                    message.isSender = senderId === mm.user._id;
 
-                if (userService.getUser(senderId)) {
-                    message.sender.id = senderId;
-                    message.sender.name = userService.getUser(senderId).name;
-                    message.sender.avatarUrl = userService.getUser(senderId).avatarUrl;
+                    if (userService.getUser(senderId)) {
+                        message.sender.id = senderId;
+                        message.sender.name = userService.getUser(senderId).name;
+                        message.sender.avatarUrl = userService.getUser(senderId).avatarUrl;
+                    }
                 }
             });
         }
