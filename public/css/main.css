@@ -82,12 +82,21 @@ body {
 
 .current-conversants{
      position: fixed;
-     color: rgba(31, 19, 19, 0.36);
+
  }
-.current-conversants:hover{
-    color: rgba(31, 19, 19,1);
+.conversant{
+    opacity: 0.5;
+    display: inline-block;
+}
+.conversant:hover {
+    opacity: 1;
+    z-index: 10;
 }
 
 .gravatar {
     z-index: 1;
+}
+
+.message-list {
+
 }

@@ -15,7 +15,7 @@ angular.module("ChatApp").controller("MessagesController",
             messageService.watchConversation(conversationId);
         }
         mm.sendMessage = function () {
-            if(mm.message !== undefined && mm.message.content !== undefined && mm.message.content.length > 0) {
+            if (mm.message !== undefined && mm.message.content !== undefined && mm.message.content.length > 0) {
                 messageService.addMessage(mm.currentConversation.id, mm.message);
                 //mm.currentConversation.messages.push( mm.message);
                 mm.message = {};
@@ -57,12 +57,12 @@ angular.module("ChatApp").controller("MessagesController",
             }
         }
 
-        function getUserAvatarUrl(id) {
+        mm.getUserAvatarUrl = function (id) {
             return userService.getUser(id).avatarUrl;
-        }
+        };
 
-        function getUserName(id) {
+        mm.getUserName = function (id) {
             return userService.getUser(id).name;
-        }
+        };
 
     });

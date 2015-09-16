@@ -1,9 +1,17 @@
 <md-content class="height-inherit" layout="column">
-    <md-content class="md-hue-1 full-conversation" ng-if="mm.currentConversation !== undefined" scroll-glue="mm.glued">
+    <md-content layout="column" flex class="md-hue-1 full-conversation" ng-if="mm.currentConversation !== undefined"
+                scroll-glue="mm.glued">
 
-        <div class="message-list" layout="column">
-            <div class="current-conversants">This is placeholder<i class="material-icons fab-icon">group</i></div>
-            <div class="message" layout-margin layout-padding layout="row"
+        <div  flex class="message-list" layout="column">
+            <div class="current-conversants">
+            <div class="conversant" ng-repeat="user in mm.currentConversation.users | filter:{ id : '!' + mm.user._id}">
+                <img alt="@{{user.id}}" class="round-avatar" height="30"
+                     ng-src="{{mm.getUserAvatarUrl(user.id)}}&amp;s=60">
+                {{mm.getUserName(user.id)}}&nbsp;
+            </div>
+            </div>
+            <div flex></div>
+            <div  class="message" layout-margin layout-padding layout="row"
                  ng-repeat="message in mm.currentConversation.messages">
                 <!--message.sender.id === mm.user._id-->
                 <span flex ng-if="message.isSender"></span>
